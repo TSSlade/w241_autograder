@@ -18,16 +18,16 @@ jobs:
           token: ${{ secrets.w241_autograder }}  # This is your PAT (personal access token). Uses `secrets.your-PAT-name-here` format
 ```
 
-The critical piece which is not self-evident or easily Google-able (but I found [here](https://upptime.js.org/docs/get-started/#after-creating-your-repository)) is that you need to specifically add your **PAT** to the _source_ repo of the GitHub Action. ([This StackOverflow respondent](https://stackoverflow.com/a/39530966) apparently had a similarly mystifying experience.)
+The critical piece which is not self-evident or easily Google-able (but I found ❇ [here](https://upptime.js.org/docs/get-started/#after-creating-your-repository)) ❇ is that you need to specifically add your **PAT** to the _source_ repo of the GitHub Action. ([This StackOverflow respondent](https://stackoverflow.com/a/39530966) apparently had a similarly mystifying experience.) 😡
 
 Once you've created your PAT (and saved it elsewhere, please!!), you add it to your repo like so:
 
 1. Go to your repo's `Settings` tab
-  ![[github-settings.png]]
+  !()[./img/github-settings.png]
 2. Select the `Secrets` option in the left navbar
-  ![[add-secrets-to-repo.png]]
+  !()[./img/add-secrets-to-repo.png]
 3. Select the `New repository secret` button in the top-right corner
-![[secret-adding-interface.png]]
+  !()[./img/secret-adding-interface.png]
 4. Add in the name you're going to enter in that `${{ secrets.your-PAT-name-here }}` line in the YAML file, then paste the token itself into the next field
 
 
