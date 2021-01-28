@@ -1,7 +1,9 @@
 # Adapted from GitHub Actions MWE for Docker containers
 # https://docs.github.com/en/actions/creating-actions/creating-a-docker-container-action
 
-on: [push]
+on:
+  push:
+    branches: [ greetings ]
 
 jobs:
   hello_mona_job:
@@ -10,7 +12,7 @@ jobs:
     steps:
     - name: Hello world action step
       id: hello
-      uses: actions/hello-world-docker-action@v1
+      uses: actions/w241_autograder@v1
       with:
         who-to-greet: 'Mona the Octocat'
     # Use the output from the `hello` step

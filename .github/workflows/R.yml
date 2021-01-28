@@ -7,9 +7,9 @@ name: R
 
 on:
   push:
-    branches: [ main ]
+    branches: [ submission ]
   pull_request:
-    branches: [ main ]
+    branches: [ submission ]
 
 jobs:
   build:
@@ -25,7 +25,7 @@ jobs:
         uses: r-lib/actions/setup-r@ffe45a39586f073cc2e9af79c4ba563b657dc6e3
         with:
           r-version: ${{ matrix.r-version }}
-#Consider moving the package installs to the docker creation           
+#Consider moving the package installs to the docker creation
       - name: Install gapminder
         run: install.packages("gapminder")
         shell: Rscript {0}
