@@ -9,7 +9,7 @@ FROM dalexhughes/w241
 # Imitating the structure of student-level-folders-within-the-repo
 RUN mkdir /tslade
 # Imitating that a student's answers are in the 'questions' folder
-RUN cp -r ps2-answers /tslade/questions
+RUN ls -lah; cp -r ./ps2-answers /tslade/questions
 # Staging the testing suite, which the shell file later moves
 COPY test_ps2_answers.R /test_ps2_answers.R
 # Executing Alex's shell script
