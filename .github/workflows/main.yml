@@ -15,7 +15,7 @@ jobs:
       uses: actions/checkout@v2
     - name: Hello world action step
       id: hello
-      uses: ./Dockerfile
+      uses: ../Dockerfile
       # uses: ./entrypoint.sh
       with:
         who-to-greet: 'Mona...the Octocat'
@@ -34,7 +34,9 @@ jobs:
       - name: Hello world action step
         # uses: ./action.yml  # Uses an action in the root directory
         # Error: Can't find 'action.yml', 'action.yaml' or 'Dockerfile' under '/home/runner/work/w241_autograder/w241_autograder/action.yml'. Did you forget to run actions/checkout before running your local action?
-        uses: ./  # Uses an action in the root directory
+        # uses: ./  # Uses an action in the root directory
+        # Error: File not found: '/home/runner/work/w241_autograder/w241_autograder/./Dockerfile'
+        uses: ../Dockerfile  # Uses an action in the root directory
         id: hello
         with:
           who-to-greet: 'Private Pyle'
