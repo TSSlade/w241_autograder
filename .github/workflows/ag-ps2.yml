@@ -15,8 +15,8 @@ jobs:                           # What actually needs done? 1+ jobs can be added
     steps:
       # To use this repository's private action,
       # you must check out the repository
-      # - name: '`Checkout` hook (standard)'    # Shows as a foldable/expandable entry in the Runs log interface
-        # uses: actions/checkout@v2
+      - name: '`Checkout` hook (standard) - REQd for local actions'    # Shows as a foldable/expandable entry in the Runs log interface
+        uses: actions/checkout@v2
       - name: 'Custom Step [1]: Firing up the AutoGrader action.yml'
         uses: ./.github/actions/AG
         id: mona
