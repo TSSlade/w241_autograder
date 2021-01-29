@@ -1,0 +1,19 @@
+# Adapted from GitHub Actions MWE for Docker containers
+# https://docs.github.com/en/actions/creating-actions/creating-a-docker-container-action
+
+# action.yml
+name: 'Hello World'
+description: 'Greet someone and record the time'
+inputs:
+  who-to-greet:  # id of input
+    description: 'Who to greet'
+    required: true
+    default: 'World'
+outputs:
+  time: # id of output
+    description: 'The time we greeted you'
+runs:
+  using: 'docker'
+  image: 'MWE-Dockerfile'
+  args:
+    - ${{ inputs.who-to-greet }}

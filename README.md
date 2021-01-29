@@ -68,3 +68,5 @@ c0b2e1c HEAD@{8}: commit: Updated to point to action file
 b870579 HEAD@{9}: commit: Moved workflow to workflows
 c731f1d HEAD@{10}: commit: Triggering a change...
 ```
+
+There was also an issue with making sure the `shebang` on the `entrypoint.sh` hadn't been displaced out of the `first-line position` by my comments giving credit to original sources. (Don't trample over conventions, kids.) Realized and resolved that via this StackOverflow answer: [standard_init_linux.go:211: exec user process caused “exec format error”](https://stackoverflow.com/questions/58298774/standard-init-linux-go211-exec-user-process-caused-exec-format-error)
