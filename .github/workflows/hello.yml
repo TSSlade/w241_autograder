@@ -13,7 +13,7 @@ jobs:
     steps:
     - name: Hello world action step
       id: hello
-      uses: w241_autograder/who-to-greet@v1
+      uses: actions/w241_autograder@v1
       # uses: ./entrypoint.sh
       with:
         who-to-greet: 'Mona...the Octocat'
