@@ -15,13 +15,13 @@ jobs:                           # What actually needs done? 1+ jobs can be added
     steps:
       # To use this repository's private action,
       # you must check out the repository
-      - name: '`Checkout` hook (standard)'    # Shows as a foldable/expandable entry in the Runs log interface
-        uses: actions/checkout@v2
-      - name: 'Custom Step [1]: "Hello world!" (the MWE)'
-        uses: ./.github/actions/MWE
+      # - name: '`Checkout` hook (standard)'    # Shows as a foldable/expandable entry in the Runs log interface
+        # uses: actions/checkout@v2
+      - name: 'Custom Step [1]: Firing up the AutoGrader action.yml'
+        uses: ./.github/actions/AG
         id: mona
-        with:
-          who-to-greet: 'Mona the Octocat'
+        # with:
+          # who-to-greet: 'Mona the Octocat'
       # Use the output from the `hello` step
       - name: 'Custom Step [2]: What time did we run this?'
         run: echo "The time was ${{ steps.mona.outputs.time }}"

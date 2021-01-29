@@ -1,0 +1,19 @@
+# Adapted from GitHub Actions MWE for Docker containers
+# https://docs.github.com/en/actions/creating-actions/creating-a-docker-container-action
+
+# action.yml
+name: 'Autograde Problem Set 2'
+description: 'Give students timely, on-demand feedback for MIDS w241 PS2'
+inputs:
+  student-answers:  # id of input
+    description: 'The file containing the code to be graded'
+    required: false
+    default: './ps2_answers.Rmd'
+outputs:
+  time: # id of output
+    description: 'Time last checked'
+runs:
+  using: 'docker'
+  image: 'AG-Dockerfile'
+  args:
+    - ${{ inputs.student-answers }}
