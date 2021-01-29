@@ -9,13 +9,10 @@ FROM dalexhughes/w241
 # Imitating the structure of student-level-folders-within-the-repo
 RUN mkdir /tslade
 
-# RUN echo "Repository:"; ls -lah "$GITHUB_REPOSITORY"
-# RUN echo "Workspace:" ; ls -lah "$GITHUB_WORKSPACE"
-
 # Imitating that a student's answers are in the 'questions' folder
-# RUN cp -r ./ps2-answers /tslade/questions
+COPY ps2-answers /tslade/questions
 # Staging the testing suite, which the shell file later moves
-# COPY test_ps2_answers.R /test_ps2_answers.R
+COPY test_ps2_answers.R /test_ps2_answers.R
 # Executing Alex's shell script
 COPY ./AG-ps2.sh /AG-ps2.sh
 RUN chmod +x /AG-ps2.sh
