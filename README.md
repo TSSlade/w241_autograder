@@ -70,3 +70,7 @@ c731f1d HEAD@{10}: commit: Triggering a change...
 ```
 
 There was also an issue with making sure the `shebang` on the `entrypoint.sh` hadn't been displaced out of the `first-line position` by my comments giving credit to original sources. (Don't trample over conventions, kids.) Realized and resolved that via this StackOverflow answer: [standard_init_linux.go:211: exec user process caused “exec format error”](https://stackoverflow.com/questions/58298774/standard-init-linux-go211-exec-user-process-caused-exec-format-error)
+
+## Apropos of Nothing
+
+Multiline strings in YAML syntax are 🍌 bananas 🍌: [How do I break a string in YAML over multiple lines?](https://stackoverflow.com/questions/3790454/how-do-i-break-a-string-in-yaml-over-multiple-lines)
