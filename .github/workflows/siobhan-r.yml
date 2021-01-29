@@ -3,13 +3,13 @@
 # See https://github.com/r-lib/actions/tree/master/examples#readme for
 # additional example workflows available for the R community.
 
-name: R
+name: Siobhan's R MWE
 
 on:
   push:
-    branches: [ submission ]
+    branches: [ siobhan ]
   pull_request:
-    branches: [ submission ]
+    branches: [ siobhan ]
 
 jobs:
   build:
@@ -25,12 +25,12 @@ jobs:
         uses: r-lib/actions/setup-r@ffe45a39586f073cc2e9af79c4ba563b657dc6e3
         with:
           r-version: ${{ matrix.r-version }}
-#Consider moving the package installs to the docker creation
+        #Consider moving the package installs to the docker creation
       - name: Install gapminder
         run: install.packages("gapminder")
         shell: Rscript {0}
-#Consider copying the files from a separate github that the docker instance has access to
-#This step also needs to grab the student's code
+        #Consider copying the files from a separate github that the docker instance has access to
+        #This step also needs to grab the student's code
       - name: copy files
         run: sudo cp R_checker.R /Users/Shared/R_checker.R
         shell: bash
