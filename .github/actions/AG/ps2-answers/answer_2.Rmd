@@ -1,0 +1,132 @@
+# 2. Randomization Inference Practice
+
+Suppose that you've been hired as the data scientist at a quack nootropics company. Despite their fraudulent intent, you're dedicated to doing good data science. Or, at least science as good as you can. 
+
+Their newest serum, *kniht* purports to raise its users' executive function. You think that it is just amphetamines. 
+
+As the data scientist for the company, you convince them to conduct a trial. Great! The good news is this:
+
+- Each person is measured twice.
+- Before one of the measurements, they are given a placebo. Before the other of the measurements they are given *kniht*. 
+- You ask for instrumentation on two concepts: 
+  - Creativity, measured as number of proposed alternative uses of an object. (This is a classic, test of "creativity", proposed by J.P. Guilford. For example, how many things can you propose doing with a camera tripod? )
+  - Physical Arousal, measured through skin conductance (i.e. how sweaty is someone). 
+  
+The bad news is this: The company knows that they're selling nonsense, and they don't want you to be able to prove it. They reason that if they provide you only six test subjects, that you won't be able to prove anything, and that they can hide behind a "fail-to-reject" claim. 
+
+```{r}
+kniht <- data.table(
+  person  = rep(LETTERS[1:6], each = 4), 
+  treat   = rep(0:1, each = 2), 
+  measure = rep(c('creative', 'sweat'))
+)
+
+
+kniht[measure == 'creative' & treat == 0, 
+      value := c(10, 13, 14, 16, 25, 40)]
+kniht[measure == 'creative' & treat == 1, 
+      value := c(12, 11, 13, 20, 21, 46)]
+kniht[measure == 'sweat' & treat == 0, 
+      value := c(0.4, 0.7, 0.3, 0.8, 1.0, 1.4)]
+kniht[measure == 'sweat' & treat == 1, 
+      value := c(0.4, 0.7, 2.0, 0.9, 1.6, 2.2)]
+```
+
+Conduct the following tests. 
+
+1. Conduct the appropriate t-test that respects the repeated-measures nature of the data (is this a paired or independent samples t-test?) for both the `creative` and the `sweat` outcomes. After you conduct your tests, write a narrative statement about what you conclude. 
+
+```{r creative t-test}
+t_test_creative <- kniht[
+  measure == 'creative', 
+  t.test(value[treat==0], value[treat==1], paired = TRUE)
+  ]
+t_test_creative
+```
+
+```{r sweat t-test}
+t_test_sweat <- kniht[
+  measure == 'sweat', 
+  t.test(value[treat==0], value[treat==1], paired = TRUE)
+  ]
+t_test_sweat
+```
+
+2. Conduct the appropriate randomization inference test that respects the repeated-measures nature of the data. After you conduct your tests, write a narrative statement about what you conclude.  
+
+```{r creative ate}
+```
+
+The key insight in this question is that we can't randomize / shuffle _between_ people. Why not? There are differences in baseline values for the individuals -- some people have baseline creative scores that are twice that of others -- and we didn't get to assign those values. Instead, we have to swap or permute _within_ the individual. This effectively just changes whether we label the outcome as either treatment or control. 
+
+But, how should we code this! Yikes! 
+
+```{r creative ri}
+## first, what is the actual ate? 
+creative_ate <- kniht[
+  measure == 'creative', 
+  .(tau = diff(value)), 
+  keyby = person
+  ][ , mean(tau)]
+
+## then what is the randomization inference vector of ates 
+## under the sharp null hypothesis 
+creative_ri <- rep(NA, 1000) 
+
+for(i in 1:1000) { 
+  creative_ri[i] <- kniht[
+    measure == 'creative' , .(ri_value = sample(value)), keyby = person][ , # shuffle
+    .(tau = diff(ri_value)), keyby = person][ ,         # compute value given shuffle
+    mean(tau)]                                          #   compute ate given shuffle 
+}
+```
+
+With that, we can test. 
+
+```{r creative test}
+creative_p_value <- mean(abs(creative_ri) > creative_ate)
+creative_p_value
+```
+
+
+```{r sweat ri}
+## first, what is the ate 
+sweat_ate <- kniht[
+  measure == 'sweat', 
+  .(tau = diff(value)), 
+  keyby = person
+  ][ , mean(tau)]
+
+## then, create the ri vector of treatment effects that are possible 
+## under the supposition that the sharp-null hypothesis -- AT THE 
+## INDIVIDUAL LEVEL -- is true. 
+
+sweat_ri <- rep(NA, 10000) 
+
+for(i in 1:10000) { 
+  sweat_ri[i] <- kniht[
+    measure == 'sweat' , .(ri_value = sample(value)), keyby = person][ , # shuffle
+    .(tau = diff(ri_value)), keyby = person][ ,      # compute value given shuffle
+    mean(tau)]                                       #   compute ate given shuffle 
+}
+```
+
+```{r sweat test}
+sweat_p_value <- mean(abs(sweat_ri) > sweat_ate)
+sweat_p_value
+```
+
+Take a moment to think about that -- **none** of the RI loops produce a value that is larger than the ATE that you observed for the `sweat` measure. It might make it easier to see if plotted. 
+
+```{r}
+ggplot() + 
+  geom_histogram(aes(x = sweat_ri)) + 
+  geom_vline(aes(xintercept = sweat_ate), color = 'red')
+```
+
+There are a number of RI ate loops that produced a value that are _equal_ to the ate that you saw. If you change your RI test to at least as extreme as, you generate a different p-value. 
+
+```{r}
+sweat_ri_p_value_2 <- mean(abs(sweat_ri) >= sweat_ate)
+sweat_ri_p_value_2
+```

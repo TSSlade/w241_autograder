@@ -1,0 +1,81 @@
+# 3. Sports Cards
+
+In this experiment, the experimenters invited consumers at a sports card trading show to bid against one other bidder for a pair trading cards.  We abstract from the multi-unit-auction details here, and simply state that the treatment auction format was theoretically predicted to produce lower bids than the control auction format.  We provide you a relevant subset of data from the experiment.
+
+In this question, we are asking you to produce p-values and confidence intervals in three different ways: 
+
+1. Using a `t.test`; 
+2. Using a regression; and,
+3. Using randomization inference. 
+
+```{r load cards data }
+d <- fread('../data/list_data_2019.csv')
+```
+
+1. Using a `t.test`, compute a 95% confidence interval for the difference between the treatment mean and the control mean. After you conduct your test, write a narrative statement, using inline code evaluation that describes what your tests find, and how you interpret these results. (You should be able to look into `str(t_test_cards)` to find the pieces that you want to pull to include in your written results.) 
+
+```{r cards t-test}
+t_test_cards <- d[ , t.test(bid ~ uniform_price_auction)]
+t_test_cards
+```
+
+2. In plain language, what does this confidence interval mean? 
+
+> The confidence interval that is reported is `r as.numeric(round(t_test_cards$conf.int, 2))`. This means that if the experiment were re-conducted with the same parameters and population, this range would cover the true value in 95 / 100 of the re-conducted experiments. 
+
+3. Conduct a randomization inference process using an estimator that you write by hand (i.e. in the same way as earlier questions). On the sharp-null distribution that this process creates, compute the 2.5% quantile and the 97.5% quantile using the function `quantile` with the appropriate vector passed to the `probs` argument. After you conduct your test, write a narrative statement of your test results. 
+
+```{r cards randomization inference} 
+## first, do you work for the randomization inference
+n_ri_loops <- 1000
+
+cards_ate <-  d[ , 
+  .(mean_bid = mean(bid)), 
+  keyby = (uniform_price_auction)][ , 
+    diff(mean_bid)]
+
+
+cards_ri_distribution <- replicate(
+  n = n_ri_loops, 
+  expr = d[ ,             
+    .(mean_bid = mean(bid)), 
+    keyby = (sample(uniform_price_auction))][ ,
+      diff(mean_bid)]
+  )
+
+
+cards_ri_quantiles <- quantile(cards_ri_distribution, c(0.025, 0.975))
+cards_ri_quantiles
+
+# I'm choosing to use two sided p-values. Because I'm not a monster. 
+cards_ri_p_value <- mean(abs(cards_ri_distribution >= cards_ate))
+cards_ri_p_value
+```
+
+> The thing is, producing a confidence interval doesn't really provide a test, right? To conduct that test, we have to go through the process of comparing the ri distribution to the estimated ate. 
+> 
+> However, you should be able to see that this permutation based method is generating something similar to the t-test that you computed. 
+
+```{r}
+cards_ate + cards_ri_quantiles
+```
+
+> This isn't a tightly principled way to reason. In RI, there is no uncertainty about the estimated treatment effect -- it simply is what it is. And, the uncertainty is placed around the values that could have arisen if the null hypothesis were actually true.
+
+4. Do you learn anything different if you regress the outcome on a binary treatment variable? To answer this question, regress `bid` on a binary variable equal to 0 for the control auction and 1 for the treatment auction and then calculate the 95% confidence interval using *classical standard errors* (in a moment you will calculate with *robust standard errors*). There are two ways to do this -- you can code them by hand; or use a built-in, `confint`. After you conduct your test, write a narrative statement of your test results. 
+
+```{r cards ols regression}
+mod <- d[ , lm(bid ~ uniform_price_auction)]
+```
+
+5. Calculate the 95% confidence interval using robust standard errors, using the `sandwich` package. There is a function in `lmtest` called `coefci` that can help with this. It is also possible to do this work by hand. After you conduct your test, write a narrative statement of your test results.
+
+```{r cards robust ci}
+cards_robust_ci <- coefci(mod, vcov. = vcovHC(mod))
+```
+
+> This robust confidence interval is _remarkably_ similar to the CI that I generated with the t-test; and, if I squint a little bit at the randomization-inference, it also seems to be covering a pretty similar range. Although the interpretation differs between the RI and frequentist (i.e. t-test and OLS) estimates, the upshot of each of these seems to be quite simialar. 
+
+6. Characterize what you learn from each of these different methods -- are the results contingent on the method of analysis that you choose? 
+
+> What we hope you take away from this is that _when the data meets the assumptions of all the methods, they should produce **very** similar estimates and tested values._ It is when the data presents a challenge to one of the methods that we have to elect to use a method that is consistent with the requirements of that method. 
