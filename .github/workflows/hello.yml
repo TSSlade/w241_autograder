@@ -13,8 +13,8 @@ jobs:
     steps:
     - name: Hello world action step
       id: hello
-      # uses: actions/w241_autograder@v1
-      uses: ./entrypoint.sh
+      uses: w241_autograder/who-to-greet@v1
+      # uses: ./entrypoint.sh
       with:
         who-to-greet: 'Mona...the Octocat'
     # Use the output from the `hello` step
@@ -30,7 +30,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Hello world action step
-        uses: ./entrypoint.sh  # Uses an action in the root directory
+        uses: ./  # Uses an action in the root directory
         id: hello
         with:
           who-to-greet: 'Private Pyle'
