@@ -7,37 +7,22 @@ on:
     branches: [ greetings ]
 
 jobs:
-  hello_mona_job:
+  my-mwe:
     runs-on: ubuntu-latest
-    name: A job to say hello
-    steps:
-    - name: Checkout
-      uses: actions/checkout@v2
-    - name: Hello world action step
-      id: hello
-      uses: ./.github/actions
-      with:
-        who-to-greet: 'Mona...the Octocat'
-    # Use the output from the `hello` step
-    - name: Get the output time
-      run: echo "The time was ${{ steps.hello.outputs.time }}"
-
-  hello_private_job:
-    runs-on: ubuntu-latest
-    name: A private job to say hello
+    name: 'A minimum working example (MWE) :octocat:'
     steps:
       # To use this repository's private action,
       # you must check out the repository
-      - name: Checkout
+      - name: 'Checkout' hook (standard)
         uses: actions/checkout@v2
-      - name: Hello world action step
-        uses: ./.github/actions
-        id: private
+      - name: 'Custom Step [1]: "Hello world!" (the MWE)'
+        uses: ./.github/actions/MWE
+        id: mona
         with:
-          who-to-greet: 'Private Pyle'
+          who-to-greet: 'Mona the Octocat'
       # Use the output from the `hello` step
-      - name: Get the output time
-        run: echo "The time was ${{ steps.private.outputs.time }}"
+      - name: 'Custom Step [2]: What time did we run this?'
+        run: echo "The time was ${{ steps.mona.outputs.time }}"
 
 # name: R
 
