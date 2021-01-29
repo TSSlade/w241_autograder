@@ -18,7 +18,8 @@ jobs:
       uses: ./.github/actions
       # Error: File not found: '/home/runner/work/w241_autograder/w241_autograder/./.github/actions/Dockerfile'
       # No. 1: ^^ Dockerfile is not currently in .github/actions folder, where .github/actions/action.yml expects it. Update and retry.
-      # 
+      # COPY failed: stat /var/lib/docker/tmp/docker-builder514921958/entrypoint.sh: no such file or directory.
+      # No. 2: ^^ Need entrypoint.sh to be local to action.yml, too. 🤦
       # uses: ./entrypoint.sh
       with:
         who-to-greet: 'Mona...the Octocat'
