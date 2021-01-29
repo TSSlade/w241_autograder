@@ -2,6 +2,8 @@
 # https://docs.github.com/en/actions/creating-actions/creating-a-docker-container-action
 # Started as main.yml in root folder
 
+name: Minimum Working Example
+
 on:
   push:
     branches: [ greetings ]
