@@ -9,8 +9,8 @@ FROM dalexhughes/w241
 # Imitating the structure of student-level-folders-within-the-repo
 RUN mkdir /tslade
 
-RUN echo "Repository:" ; ls -lah "$GITHUB_REPOSITORY"
-RUN echo "Workspace:" ; ls -lah "$GITHUB_WORKSPACE"
+# RUN echo "Repository:"; ls -lah "$GITHUB_REPOSITORY"
+# RUN echo "Workspace:" ; ls -lah "$GITHUB_WORKSPACE"
 
 # Imitating that a student's answers are in the 'questions' folder
 # RUN cp -r ./ps2-answers /tslade/questions

@@ -1,3 +1,7 @@
+#!/bin/sh -l
+
+ls -lah
+
 for student_repo in ./*/
 do
     echo "Working on: $student_repo" # Whose problem set are we grading?
