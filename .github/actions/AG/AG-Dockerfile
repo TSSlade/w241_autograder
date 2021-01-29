@@ -1,0 +1,12 @@
+# Adapted from GitHub Actions MWE for Docker containers
+# https://docs.github.com/en/actions/creating-actions/creating-a-docker-container-action
+
+# Container image that runs your code
+FROM dalexhughes/w241
+
+# Copies your code file from your action repository to the filesystem path `/` of the container
+COPY my-answers.R /tslade/my-answers.R
+COPY AG-ps2.sh /AG-ps2.sh
+
+# Code file to execute when the docker container starts up (`entrypoint.sh`)
+ENTRYPOINT ["/AG-ps2.sh"]
