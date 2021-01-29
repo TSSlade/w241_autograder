@@ -3,6 +3,7 @@ do
     echo "Working on: $student_repo" # Whose problem set are we grading?
     cd $student_repo                 # Change into their repository
 
+    ls -lah
     # copy testing suite to directory
     cp ../test_ps2_answers.R ./test_ps2_answers.R
 
