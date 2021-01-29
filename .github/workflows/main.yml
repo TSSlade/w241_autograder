@@ -13,7 +13,7 @@ jobs:
     steps:
       # To use this repository's private action,
       # you must check out the repository
-      - name: 'Checkout' hook (standard)
+      - name: "Checkout" hook (standard)
         uses: actions/checkout@v2
       - name: 'Custom Step [1]: "Hello world!" (the MWE)'
         uses: ./.github/actions/MWE
