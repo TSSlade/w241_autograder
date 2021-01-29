@@ -15,7 +15,7 @@ jobs:
       uses: actions/checkout@v2
     - name: Hello world action step
       id: hello
-      uses: ../Dockerfile
+      uses: ./.github/actions
       # uses: ./entrypoint.sh
       with:
         who-to-greet: 'Mona...the Octocat'
@@ -36,7 +36,9 @@ jobs:
         # Error: Can't find 'action.yml', 'action.yaml' or 'Dockerfile' under '/home/runner/work/w241_autograder/w241_autograder/action.yml'. Did you forget to run actions/checkout before running your local action?
         # uses: ./  # Uses an action in the root directory
         # Error: File not found: '/home/runner/work/w241_autograder/w241_autograder/./Dockerfile'
-        uses: ../Dockerfile  # Uses an action in the root directory
+        # uses: ../Dockerfile  # Uses an action in the root directory
+        # The workflow is not valid. .github/workflows/main.yml (Line: 18, Col: 13): Expected format {org}/{repo}[/path]@ref. Actual '../Dockerfile' Input string was not in a correct format.
+        uses: ./.github/actions/action.yml
         id: hello
         with:
           who-to-greet: 'Private Pyle'
