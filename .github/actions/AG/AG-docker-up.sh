@@ -1,20 +1,23 @@
 #!/bin/sh -l
 
 echo "Docker container is up!"
-echo "++++ We're here: ${pwd}"
-echo "This is what we're working with:"
-# tree -L 2 .
+echo "++++ We're here:"
+pwd
 ls -lah
 cd ../
-echo "Up 1: ${pwd}"
+echo "Up 1:"
+pwd
 ls -lah .
 cd ../
-echo "Up 2: ${pwd}"
+echo "Up 2:"
+pwd
 ls -lah .
 cd ../
-echo "Up 3: ${pwd}"
+echo "Up 3:"
+pwd
 ls -lah .
-ls -lah ../../
+tree -L 3
+
 # echo "And here's the stuff in the Auntie Workspace volume:"
 # # tree -L "${HOME}"
 # ls -lah ../../workspace/

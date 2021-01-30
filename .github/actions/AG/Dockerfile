@@ -17,6 +17,7 @@ COPY test_ps2_answers.R /test_ps2_answers.R
 # Executing Alex's shell script
 COPY ./AG-docker-up.sh /AG-docker-up.sh
 RUN chmod +x /AG-docker-up.sh
+RUN sudo apt-get install tree
 
 RUN ls -lah
 
