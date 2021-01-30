@@ -45,6 +45,7 @@ jobs:                           # What actually needs done? 1+ jobs can be added
         shell: bash
         run: |
           cp -r "${GITHUB_WORKSPACE}/ps2" "${HOME}/ps2"
+          mkdir "${HOME}/ps2/student"
           echo "GH HOME:"
           tree -L 2 "${HOME}"
 
