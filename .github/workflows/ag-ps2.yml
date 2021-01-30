@@ -31,11 +31,13 @@ jobs:                           # What actually needs done? 1+ jobs can be added
         shell: bash
         run: |
           echo "GitHub Action filesystem:"
-          ls -lah "/github"
           echo "GH Workspace:"
           ls -lah "${GITHUB_WORKSPACE}"
+          echo "GH Workspace up 1:"
+          ls -lah "${GITHUB_WORKSPACE}/../"
           echo "GH Event Path:"
           ls -lah "${GITHUB_EVENT_PATH}"
+
           echo "GH root:"
           ls -lah "/"
 
