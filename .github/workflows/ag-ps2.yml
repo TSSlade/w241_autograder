@@ -29,6 +29,8 @@ jobs:                           # What actually needs done? 1+ jobs can be added
           cp -r "${GITHUB_WORKSPACE}/tslade" "${HOME}/tslade"
           echo "GH Home:"
           tree -L 2 "${HOME}"
+          echo "GH Actions folder?:"
+          tree -L 2 "${GITHUB_WORKSPACE}/../../_actions/actions/"
 
       - id: Fetch-Suite
         name: 'Custom Step [2]: Go grab testing suite from instructor repo'
