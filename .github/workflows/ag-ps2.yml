@@ -27,10 +27,10 @@ jobs:                           # What actually needs done? 1+ jobs can be added
           echo "GH Workspace for local repo:"
           tree -L 2 "${GITHUB_WORKSPACE}"
           cp -r "${GITHUB_WORKSPACE}/${GITHUB_ACTOR}" "${HOME}/${GITHUB_ACTOR}"
-          echo "GH Home:"
-          tree -L 2 "${HOME}"
-          echo "GH Actions folder?:"
-          tree -L 2 "${GITHUB_WORKSPACE}/../../_actions/actions/"
+        # echo "GH Home:"
+        # tree -L 2 "${HOME}"
+        # echo "GH Actions folder?:"
+        # tree -L 2 "${GITHUB_WORKSPACE}/../../_actions/actions/"
 
       - id: Fetch-Suite
         name: 'Custom Step [2]: Go grab testing suite from instructor repo'
@@ -46,8 +46,9 @@ jobs:                           # What actually needs done? 1+ jobs can be added
         run: |
           cp -r "${GITHUB_WORKSPACE}/ps2" "${HOME}/ps2"
           mkdir "${HOME}/ps2/student"
-          echo "GH HOME:"
-          tree -L 2 "${HOME}"
+          cp -r "${HOME}/${GITHUB_ACTOR}" "${HOME}/ps2/student/${GITHUB_ACTOR}"
+          echo "GH HOME/ps2:"
+          tree -L 2 "${HOME}/ps2"
 
       - name: '`Checkout` hook (standard) - REQd for EACH local action'    # Shows as a foldable/expandable entry in the Runs log interface
         uses: actions/checkout@v2
