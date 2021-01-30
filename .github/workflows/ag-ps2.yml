@@ -52,11 +52,11 @@ jobs:                           # What actually needs done? 1+ jobs can be added
         run: echo "The time was ${{ steps.Docker-Up.outputs.time }}"
 
 
-    steps:
-      - name: Access contents of private repo
-        # env:
-          # GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        uses: actions/checkout@v2
-        with:
-          repository: TSSlade/autograder_secrets
-          token: ${{ secrets.w241_autograder }}
+    # steps:
+    #   - name: Access contents of private repo
+    #     # env:
+    #       # GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    #     uses: actions/checkout@v2
+    #     with:
+    #       repository: TSSlade/autograder_secrets
+    #       token: ${{ secrets.w241_autograder }}
