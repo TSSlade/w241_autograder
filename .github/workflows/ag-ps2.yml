@@ -49,6 +49,8 @@ jobs:                           # What actually needs done? 1+ jobs can be added
           cp -r "${HOME}/${GITHUB_ACTOR}" "${HOME}/ps2/student/${GITHUB_ACTOR}"
           echo "GH HOME/ps2:"
           tree -L 2 "${HOME}/ps2"
+          echo "GH Root:"
+          tree -L 2 /
 
       - name: '`Checkout` hook (standard) - REQd for EACH local action'    # Shows as a foldable/expandable entry in the Runs log interface
         uses: actions/checkout@v2

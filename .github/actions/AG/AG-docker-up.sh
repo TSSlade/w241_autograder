@@ -7,16 +7,7 @@ ls -lah
 cd ../
 echo "Up 1:"
 pwd
-ls -lah .
-cd ../
-echo "Up 2:"
-pwd
-ls -lah .
-cd ../
-echo "Up 3:"
-pwd
-ls -lah .
-tree -L 3
+tree -L 2
 
 # echo "And here's the stuff in the Auntie Workspace volume:"
 # # tree -L "${HOME}"
