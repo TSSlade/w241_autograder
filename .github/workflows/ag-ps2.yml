@@ -15,7 +15,7 @@ jobs:                           # What actually needs done? 1+ jobs can be added
     steps:
       # To use this repository's private action,
       # you must check out the repository
-      - name: '`Checkout` hook (standard) - REQd for local actions'    # Shows as a foldable/expandable entry in the Runs log interface
+      - name: '`Checkout` hook (standard) - REQd for EACH local action'    # Shows as a foldable/expandable entry in the Runs log interface
         uses: actions/checkout@v2
 
       - id: Fetch-Suite
@@ -25,6 +25,18 @@ jobs:                           # What actually needs done? 1+ jobs can be added
           repository: TSSlade/autograder_secrets   # The (private) repo where our data is living
           ref: ps2                                  # The specific branch to be checked out
           token: ${{ secrets.w241_autograder }}     # This PAT needs to be configured in the src repo (i.e. the one mentioned 2 lines up)
+        run: |
+          echo "GitHub Action filesystem:"
+          ls -lah "/github"
+          echo "GH Workspace:"
+          ls -lah "${GITHUB_WORKSPACE}"
+          echo "GH Event Path:"
+          ls -lah "${GITHUB_EVENT_PATH}"
+          echo "GH root:"
+          ls -lah "/"
+
+      - name: '`Checkout` hook (standard) - REQd for EACH local action'    # Shows as a foldable/expandable entry in the Runs log interface
+        uses: actions/checkout@v2
 
       - id: Docker-Up
         name: 'Custom Step [2]: Spinning up Docker Container via AG/action.yml'
