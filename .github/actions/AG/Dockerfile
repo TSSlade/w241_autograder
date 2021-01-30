@@ -7,7 +7,7 @@ FROM dalexhughes/w241
 # Copies your code file from your action repository to the filesystem path `/` of the container
 
 # Imitating the structure of student-level-folders-within-the-repo
-RUN mkdir /tslade
+# RUN mkdir /tslade
 
 # Imitating that a student's answers are in the 'questions' folder
 # COPY ps2-answers /tslade/questions
