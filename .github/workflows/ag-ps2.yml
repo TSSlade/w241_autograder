@@ -29,10 +29,12 @@ jobs:                           # What actually needs done? 1+ jobs can be added
           token: ${{ secrets.w241_autograder }}     # This PAT needs to be configured in the src repo (i.e. the one mentioned 2 lines up)
       - id: Copy-Suite
         name: 'Custom Step [3]: Copy the testing suite from the instructor repo to the ephemeral Docker container'
+        shell: bash
         run: sh ./github/actions/AG/AG-move-ps2.sh
       - id: Run-Suite
         name: 'Custom Step [4]: Run Alex's script over student folders'
-        run: sh ./github/actions/AG/AG-test-ps2.sh
+        shell: bash
+        run: 'sh ./github/actions/AG/AG-test-ps2.sh'
       # Use the output from the `hello` step
       - name: 'Custom Step [5]: What time did we run this?'
         run: echo "The time was ${{ steps.Docker-Up.outputs.time }}"
