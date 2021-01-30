@@ -30,50 +30,31 @@ jobs:                           # What actually needs done? 1+ jobs can be added
         name: "Exploring the post-cloning file system"
         shell: bash
         run: |
-          echo "GitHub Action filesystem"
-          echo "GH Home:"
-          ls -lah "${HOME}"
-          echo "GH Workspace:"
-          tree -L 2 "${GITHUB_WORKSPACE}"
-          echo "GH Workspace up 2:"
-          tree -L 2 "${GITHUB_WORKSPACE}/../../"
-          echo "Can we reach our .actions folder?"
-          tree -L 2 "${GITHUB_WORKSPACE}/../../_actions"
-          echo "Can we move a file to outside the protected space?"
           cp "${GITHUB_WORKSPACE}/README.md" "${HOME}/README2.md"
           echo "GH HOME:"
           ls -lah "${HOME}"
 
-    # -v "/home/runner/work/_temp/_github_home":"/github/home"
+      - name: '`Checkout` hook (standard) - REQd for EACH local action'    # Shows as a foldable/expandable entry in the Runs log interface
+        uses: actions/checkout@v2
 
-    #   - name: '`Checkout` hook (standard) - REQd for EACH local action'    # Shows as a foldable/expandable entry in the Runs log interface
-    #     uses: actions/checkout@v2
+      - id: Docker-Up
+        name: 'Custom Step [2]: Spinning up Docker Container via AG/action.yml'
+        uses: ./.github/actions/AG                  # Runs DockerUp.sh at the end...
 
-    #   - id: Docker-Up
-    #     name: 'Custom Step [2]: Spinning up Docker Container via AG/action.yml'
-    #     uses: ./.github/actions/AG                  # Runs DockerUp.sh at the end...
+      - id: Copy-Suite
+        name: 'Custom Step [3]: Is the HOME thing still there after a new Checkout?'
+        shell: bash
+        # run: echo "${GITHUB_ACTION_PATH}"
+        run: |
+          echo "GitHub Action filesystem post-Dockerizing"
+          echo "GH Home:"
+          tree -L 2 "${HOME}"
+          echo "GH Workspace under Docker regime:"
+          tree -L 2 "${GITHUB_WORKSPACE}"
 
-    #   - id: Copy-Suite
-    #     name: 'Custom Step [3]: Copy the testing suite from the instructor repo to the ephemeral Docker container'
-    #     shell: bash
-    #     # run: echo "${GITHUB_ACTION_PATH}"
-    #     run: |
-    #       echo "Docker container filesystem:"
-    #       ls -lah "/github"
-    #       echo "GH Workspace:"
-    #       ls -lah "${GITHUB_WORKSPACE}"
-    #       echo "GH Event Path:"
-    #       ls -lah "${GITHUB_EVENT_PATH}"
-    #       echo "GH root:"
-    #       ls -lah "/"
-    #       echo "GH root/home:"
-    #       ls -lah "/home"
-    #       echo "GH root/mnt:"
-    #       ls -lah "/mnt"
-    #       # make file runnable, might not be necessary
-    #       chmod +x "${GITHUB_WORKSPACE}/../.github/actions/AG/AG-move-ps2.sh"
-    #       # run script
-    #       "${GITHUB_WORKSPACE}/.github/actions/AG/AG-move-ps2.sh"
+    # chmod +x "${GITHUB_WORKSPACE}/../.github/actions/AG/AG-move-ps2.sh"
+    # # run script
+    # "${GITHUB_WORKSPACE}/.github/actions/AG/AG-move-ps2.sh"
 
     #   # - id: Run-Suite
     #   #   name: 'Custom Step [4]: Run Alex's script over student folders'
