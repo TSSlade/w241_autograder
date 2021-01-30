@@ -26,20 +26,20 @@ jobs:                           # What actually needs done? 1+ jobs can be added
         name: 'Custom Step [2]: Go grab testing suite from instructor repo'
         uses: actions/checkout@v2
         with:
-          repository: TSSlade/autograder_secrets/   # The (private) repo where our data is living
+          repository: TSSlade/autograder_secrets   # The (private) repo where our data is living
           ref: ps2                                  # The specific branch to be checked out
           token: ${{ secrets.w241_autograder }}     # This PAT needs to be configured in the src repo (i.e. the one mentioned 2 lines up)
 
       - id: Copy-Suite
         name: 'Custom Step [3]: Copy the testing suite from the instructor repo to the ephemeral Docker container'
         shell: bash
-        run: echo "${GITHUB_ACTION_PATH}"
-        # |
-        #   ls -lah "${GITHUB_WORKSPACE}"
-        #   # make file runnable, might not be necessary
-        #   chmod +x "${GITHUB_WORKSPACE}/.github/actions/AG/AG-move-ps2.sh"
-        #   # run script
-        #   "${GITHUB_WORKSPACE}/.github/actions/AG/AG-move-ps2.sh"
+        # run: echo "${GITHUB_ACTION_PATH}"
+        run: |
+          ls -lah "${GITHUB_WORKSPACE}"
+          # make file runnable, might not be necessary
+          chmod +x "${GITHUB_WORKSPACE}/.github/actions/AG/AG-move-ps2.sh"
+          # run script
+          "${GITHUB_WORKSPACE}/.github/actions/AG/AG-move-ps2.sh"
 
       # - id: Run-Suite
       #   name: 'Custom Step [4]: Run Alex's script over student folders'
