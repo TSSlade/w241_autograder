@@ -30,62 +30,70 @@ jobs:                           # What actually needs done? 1+ jobs can be added
         name: "Exploring the post-cloning file system"
         shell: bash
         run: |
-          echo "GitHub Action filesystem:"
+          echo "GitHub Action filesystem"
+          echo "GH Home:"
+          ls -lah "${HOME}"
           echo "GH Workspace:"
           ls -lah "${GITHUB_WORKSPACE}"
           echo "GH Workspace up 1:"
           ls -lah "${GITHUB_WORKSPACE}/../"
           echo "GH Event Path:"
           ls -lah "${GITHUB_EVENT_PATH}"
-
+          echo "Can we reach our actions folder?"
+          ls -lah "${GITHUB_EVENT_PATH}/../"
+          echo "Can we -tree- it?"
+          tree -L 2 "${GITHUB_EVENT_PATH}/../"
+          echo "Can we move a file to outside the protected space?"
+          cp "${GITHUB_WORKSPACE}/README.md" /README2.md
           echo "GH root:"
           ls -lah "/"
+          -v "/home/runner/work/_temp/_github_home":"/github/home"
 
-      - name: '`Checkout` hook (standard) - REQd for EACH local action'    # Shows as a foldable/expandable entry in the Runs log interface
-        uses: actions/checkout@v2
-
-      - id: Docker-Up
-        name: 'Custom Step [2]: Spinning up Docker Container via AG/action.yml'
-        uses: ./.github/actions/AG                  # Runs DockerUp.sh at the end...
-
-      - id: Copy-Suite
-        name: 'Custom Step [3]: Copy the testing suite from the instructor repo to the ephemeral Docker container'
-        shell: bash
-        # run: echo "${GITHUB_ACTION_PATH}"
-        run: |
-          echo "Docker container filesystem:"
-          ls -lah "/github"
-          echo "GH Workspace:"
-          ls -lah "${GITHUB_WORKSPACE}"
-          echo "GH Event Path:"
-          ls -lah "${GITHUB_EVENT_PATH}"
-          echo "GH root:"
-          ls -lah "/"
-          echo "GH root/home:"
-          ls -lah "/home"
-          echo "GH root/mnt:"
-          ls -lah "/mnt"
-          # make file runnable, might not be necessary
-          chmod +x "${GITHUB_WORKSPACE}/../.github/actions/AG/AG-move-ps2.sh"
-          # run script
-          "${GITHUB_WORKSPACE}/.github/actions/AG/AG-move-ps2.sh"
-
-      # - id: Run-Suite
-      #   name: 'Custom Step [4]: Run Alex's script over student folders'
-      #   shell: bash
-      #   run: |
-      #     sh .github/actions/AG/AG-test-ps2.sh
-      # Use the output from the `hello` step
-
-      - name: 'Custom Step [5]: What time did we run this?'
-        run: echo "The time was ${{ steps.Docker-Up.outputs.time }}"
-
-
-    # steps:
-    #   - name: Access contents of private repo
-    #     # env:
-    #       # GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    #   - name: '`Checkout` hook (standard) - REQd for EACH local action'    # Shows as a foldable/expandable entry in the Runs log interface
     #     uses: actions/checkout@v2
-    #     with:
-    #       repository: TSSlade/autograder_secrets
-    #       token: ${{ secrets.w241_autograder }}
+
+    #   - id: Docker-Up
+    #     name: 'Custom Step [2]: Spinning up Docker Container via AG/action.yml'
+    #     uses: ./.github/actions/AG                  # Runs DockerUp.sh at the end...
+
+    #   - id: Copy-Suite
+    #     name: 'Custom Step [3]: Copy the testing suite from the instructor repo to the ephemeral Docker container'
+    #     shell: bash
+    #     # run: echo "${GITHUB_ACTION_PATH}"
+    #     run: |
+    #       echo "Docker container filesystem:"
+    #       ls -lah "/github"
+    #       echo "GH Workspace:"
+    #       ls -lah "${GITHUB_WORKSPACE}"
+    #       echo "GH Event Path:"
+    #       ls -lah "${GITHUB_EVENT_PATH}"
+    #       echo "GH root:"
+    #       ls -lah "/"
+    #       echo "GH root/home:"
+    #       ls -lah "/home"
+    #       echo "GH root/mnt:"
+    #       ls -lah "/mnt"
+    #       # make file runnable, might not be necessary
+    #       chmod +x "${GITHUB_WORKSPACE}/../.github/actions/AG/AG-move-ps2.sh"
+    #       # run script
+    #       "${GITHUB_WORKSPACE}/.github/actions/AG/AG-move-ps2.sh"
+
+    #   # - id: Run-Suite
+    #   #   name: 'Custom Step [4]: Run Alex's script over student folders'
+    #   #   shell: bash
+    #   #   run: |
+    #   #     sh .github/actions/AG/AG-test-ps2.sh
+    #   # Use the output from the `hello` step
+
+    #   - name: 'Custom Step [5]: What time did we run this?'
+    #     run: echo "The time was ${{ steps.Docker-Up.outputs.time }}"
+
+
+    # # steps:
+    # #   - name: Access contents of private repo
+    # #     # env:
+    # #       # GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    # #     uses: actions/checkout@v2
+    # #     with:
+    # #       repository: TSSlade/autograder_secrets
+    # #       token: ${{ secrets.w241_autograder }}
