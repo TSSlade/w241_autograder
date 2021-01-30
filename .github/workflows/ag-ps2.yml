@@ -18,39 +18,48 @@ jobs:                           # What actually needs done? 1+ jobs can be added
       - name: '`Checkout` hook (standard) - REQd for EACH local action'    # Shows as a foldable/expandable entry in the Runs log interface
         uses: actions/checkout@v2
 
+      - id: Copy-Answers
+        name: 'Custom Step [1]: Move answers to persistent HOME'
+        shell: bash
+        # run: echo "${GITHUB_ACTION_PATH}"
+        run: |
+          echo "GitHub Action filesystem"
+          echo "GH Workspace for local repo:"
+          tree -L 2 "${GITHUB_WORKSPACE}"
+          cp -r "${GITHUB_WORKSPACE}/tslade" "${HOME}/tslade"
+          echo "GH Home:"
+          tree -L 2 "${HOME}"
+
       - id: Fetch-Suite
-        name: 'Custom Step [1]: Go grab testing suite from instructor repo'
+        name: 'Custom Step [2]: Go grab testing suite from instructor repo'
         uses: actions/checkout@v2
         with:
           repository: TSSlade/autograder_secrets   # The (private) repo where our data is living
           ref: ps2                                  # The specific branch to be checked out
           token: ${{ secrets.w241_autograder }}     # This PAT needs to be configured in the src repo (i.e. the one mentioned 2 lines up)
 
-      - id: Explore-FS1
-        name: "Exploring the post-cloning file system"
+      - id: Store-Suite
+        name: "Custom Step [3]: Moving payload to persistent HOME"
         shell: bash
         run: |
-          cp "${GITHUB_WORKSPACE}/README.md" "${HOME}/README2.md"
+          cp -r "${GITHUB_WORKSPACE}/ps2" "${HOME}/ps2"
           echo "GH HOME:"
-          ls -lah "${HOME}"
+          tree -L 2 "${HOME}"
 
       - name: '`Checkout` hook (standard) - REQd for EACH local action'    # Shows as a foldable/expandable entry in the Runs log interface
         uses: actions/checkout@v2
 
       - id: Docker-Up
-        name: 'Custom Step [2]: Spinning up Docker Container via AG/action.yml'
+        name: 'Custom Step [4]: Spinning up Docker Container via AG/action.yml'
         uses: ./.github/actions/AG                  # Runs DockerUp.sh at the end...
 
-      - id: Copy-Suite
-        name: 'Custom Step [3]: Is the HOME thing still there after a new Checkout?'
+      - id: Execute-Suite
+        name: 'Custom Step [5]: Running test suite'
         shell: bash
         # run: echo "${GITHUB_ACTION_PATH}"
         run: |
-          echo "GitHub Action filesystem post-Dockerizing"
-          echo "GH Home:"
-          tree -L 2 "${HOME}"
-          echo "GH Workspace under Docker regime:"
-          tree -L 2 "${GITHUB_WORKSPACE}"
+          tree -L 2 "${GITHUB_WORKSPACE}/../../_actions/actions/"
+          sh "${GITHUB_WORKSPACE}/../../_actions/actions/AG-move-ps2.sh"
 
     # chmod +x "${GITHUB_WORKSPACE}/../.github/actions/AG/AG-move-ps2.sh"
     # # run script
