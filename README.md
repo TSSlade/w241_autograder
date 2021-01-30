@@ -71,6 +71,16 @@ c731f1d HEAD@{10}: commit: Triggering a change...
 
 There was also an issue with making sure the `shebang` on the `entrypoint.sh` hadn't been displaced out of the `first-line position` by my comments giving credit to original sources. (Don't trample over conventions, kids.) Realized and resolved that via this StackOverflow answer: [standard_init_linux.go:211: exec user process caused “exec format error”](https://stackoverflow.com/questions/58298774/standard-init-linux-go211-exec-user-process-caused-exec-format-error)
 
+## Executing Alex's script in the new Dockerfile
+
+The default / MWE version used an `ENTRYPOINT` value of `entrypoint.sh`. After significant painful trial and error, I think I've settled on the following:
+
+1. Verify you've made your `ENTRYPOINT` script executable (i.e., `$ chmod +x the-file-name-here.sh`)
+1. You cannot execute that on the file until the file is within the Docker volume you're creating.
+1. This means that your `COPY src-file-here /target-file-here` line in the Dockerfile needs to **precede** your `$ chmod +x` command.
+1. It also appears that the `src-file-here` is living in a sort of no-man's land - your `$ chmod +x` can only act upon it once it has been moved into the scope of the volume (i.e., pay attention to the leading `/` in `/target-file-here`.)
+1. 
+
 ## Apropos of Nothing
 
 Multiline strings in YAML syntax are 🍌 bananas 🍌: [How do I break a string in YAML over multiple lines?](https://stackoverflow.com/questions/3790454/how-do-i-break-a-string-in-yaml-over-multiple-lines)

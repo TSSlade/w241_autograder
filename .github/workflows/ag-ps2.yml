@@ -17,11 +17,17 @@ jobs:                           # What actually needs done? 1+ jobs can be added
       # you must check out the repository
       - name: '`Checkout` hook (standard) - REQd for local actions'    # Shows as a foldable/expandable entry in the Runs log interface
         uses: actions/checkout@v2
-      - name: 'Custom Step [1]: Firing up the AutoGrader action.yml'
+      - id: Docker-Up
+        name: 'Custom Step [1]: Spinning up Docker Container via AG/action.yml'
         uses: ./.github/actions/AG
-        id: mona
         # with:
           # who-to-greet: 'Mona the Octocat'
+      - id: Fetch-Suite
+        name: 'Custom Step [2]: Go grab testing suite from instructor repo'
+        uses: ./github/actions/AG/fetch_suite.sh
+      - id: Run-Suite
+        name: 'Custom Step [3]: Run Alex's script over student folders'
+        uses: ./github/actions/AG/AG-ps2.sh
       # Use the output from the `hello` step
-      - name: 'Custom Step [2]: What time did we run this?'
-        run: echo "The time was ${{ steps.mona.outputs.time }}"
+      - name: 'Custom Step [4]: What time did we run this?'
+        run: echo "The time was ${{ steps.Docker-Up.outputs.time }}"

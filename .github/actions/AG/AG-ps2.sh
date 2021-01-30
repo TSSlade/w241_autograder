@@ -21,10 +21,10 @@ do
     cat test_results.md
 
     # Do the git work wc
-    git add ./answers/ && git commit -m 'adds solutions'
-    git add ./test_ps2_answers.R && git commit -m 'adds testing suite'
-    git add test_results.md && git commit -m 'instructor conducted test results for $student_repo'
-    git push origin master
+    # git add ./answers/ && git commit -m 'adds solutions'
+    # git add ./test_ps2_answers.R && git commit -m 'adds testing suite'
+    # git add test_results.md && git commit -m 'instructor conducted test results for $student_repo'
+    # git push origin master
 
     cd .. # Change back into the top level directory; then loop through the next
 done
