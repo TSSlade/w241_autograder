@@ -26,7 +26,7 @@ jobs:                           # What actually needs done? 1+ jobs can be added
           echo "GitHub Action filesystem"
           echo "GH Workspace for local repo:"
           tree -L 2 "${GITHUB_WORKSPACE}"
-          cp -r "${GITHUB_WORKSPACE}/tslade" "${HOME}/tslade"
+          cp -r "${GITHUB_WORKSPACE}/${GITHUB_ACTOR}" "${HOME}/${GITHUB_ACTOR}"
           echo "GH Home:"
           tree -L 2 "${HOME}"
           echo "GH Actions folder?:"
@@ -60,8 +60,9 @@ jobs:                           # What actually needs done? 1+ jobs can be added
         shell: bash
         # run: echo "${GITHUB_ACTION_PATH}"
         run: |
-          tree -L 2 "${GITHUB_WORKSPACE}/../../_actions/actions/"
-          sh "${GITHUB_WORKSPACE}/../../_actions/actions/AG-move-ps2.sh"
+          cp "${HOME}/${GITHUB_ACTOR} ${HOME}/ps2/student/${GITHUB_ACTOR}"
+          tree -L 2 "${HOME}/ps2/student/${GITHUB_ACTOR}"
+          sh "${HOME}/ps2/test_ps2.sh"
 
     # chmod +x "${GITHUB_WORKSPACE}/../.github/actions/AG/AG-move-ps2.sh"
     # # run script
