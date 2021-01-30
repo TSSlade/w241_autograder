@@ -14,6 +14,6 @@ outputs:
     description: 'Time last checked'
 runs:
   using: 'docker'
-  image: "${GITHUB_ACTION_PATH}/AG-dockerfile"
+  image: Dockerfile
   args:
     - ${{ inputs.student-answers }}
