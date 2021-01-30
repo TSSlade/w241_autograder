@@ -37,17 +37,16 @@ jobs:                           # What actually needs done? 1+ jobs can be added
           ls -lah "${GITHUB_WORKSPACE}"
           echo "GH Workspace up 1:"
           ls -lah "${GITHUB_WORKSPACE}/../"
-          echo "GH Event Path:"
-          ls -lah "${GITHUB_EVENT_PATH}"
-          echo "Can we reach our actions folder?"
-          ls -lah "${GITHUB_EVENT_PATH}/../"
+          echo "GH Workspace up 2:"
+          ls -lah "${GITHUB_WORKSPACE}/../../"
           echo "Can we -tree- it?"
-          tree -L 2 "${GITHUB_EVENT_PATH}/../"
+          tree -L 2 "${GITHUB_WORKSPACE}/../../"
           echo "Can we move a file to outside the protected space?"
-          cp "${GITHUB_WORKSPACE}/README.md" /README2.md
+          cp "${GITHUB_WORKSPACE}/README.md" "${HOME}/README2.md"
           echo "GH root:"
           ls -lah "/"
-          -v "/home/runner/work/_temp/_github_home":"/github/home"
+
+    # -v "/home/runner/work/_temp/_github_home":"/github/home"
 
     #   - name: '`Checkout` hook (standard) - REQd for EACH local action'    # Shows as a foldable/expandable entry in the Runs log interface
     #     uses: actions/checkout@v2
