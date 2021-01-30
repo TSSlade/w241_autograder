@@ -10,3 +10,6 @@ ls -lah ../
 echo "And here's the stuff in the grandparent volume:"
 # tree -L "${HOME}"
 ls -lah ../../
+echo "And here's the stuff in the Auntie Home volume:"
+# tree -L "${HOME}"
+ls -lah ../../home/
