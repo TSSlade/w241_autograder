@@ -18,27 +18,31 @@ jobs:                           # What actually needs done? 1+ jobs can be added
       - name: '`Checkout` hook (standard) - REQd for local actions'    # Shows as a foldable/expandable entry in the Runs log interface
         uses: actions/checkout@v2
 
-      - id: Docker-Up
-        name: 'Custom Step [1]: Spinning up Docker Container via AG/action.yml'
-        uses: ./.github/actions/AG                  # Runs DockerUp.sh at the end...
-
       - id: Fetch-Suite
-        name: 'Custom Step [2]: Go grab testing suite from instructor repo'
+        name: 'Custom Step [1]: Go grab testing suite from instructor repo'
         uses: actions/checkout@v2
         with:
           repository: TSSlade/autograder_secrets   # The (private) repo where our data is living
           ref: ps2                                  # The specific branch to be checked out
           token: ${{ secrets.w241_autograder }}     # This PAT needs to be configured in the src repo (i.e. the one mentioned 2 lines up)
 
+      - id: Docker-Up
+        name: 'Custom Step [2]: Spinning up Docker Container via AG/action.yml'
+        uses: ./.github/actions/AG                  # Runs DockerUp.sh at the end...
+
       - id: Copy-Suite
         name: 'Custom Step [3]: Copy the testing suite from the instructor repo to the ephemeral Docker container'
         shell: bash
         # run: echo "${GITHUB_ACTION_PATH}"
         run: |
+          echo "Docker container filesystem:"
+          ls -lah "/github"
           echo "GH Workspace:"
           ls -lah "${GITHUB_WORKSPACE}"
           echo "GH Event Path:"
           ls -lah "${GITHUB_EVENT_PATH}"
+          echo "GH root:"
+          ls -lah "/"
           echo "GH root/home:"
           ls -lah "/home"
           echo "GH root/mnt:"
