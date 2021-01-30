@@ -33,10 +33,7 @@ jobs:                           # What actually needs done? 1+ jobs can be added
       - id: Copy-Suite
         name: 'Custom Step [3]: Copy the testing suite from the instructor repo to the ephemeral Docker container'
         shell: bash
-        run: |
-          ls -lah "${GITHUB_WORKSPACE}"
-
-      # sh .github/actions/AG/AG-move-ps2.sh
+        run: ls -lah "${GITHUB_WORKSPACE}"
 
       - id: Run-Suite
         name: 'Custom Step [4]: Run Alex's script over student folders'
