@@ -19,15 +19,30 @@ jobs:                           # What actually needs done? 1+ jobs can be added
         uses: actions/checkout@v2
       - id: Docker-Up
         name: 'Custom Step [1]: Spinning up Docker Container via AG/action.yml'
-        uses: ./.github/actions/AG
-        # with:
-          # who-to-greet: 'Mona the Octocat'
+        uses: ./.github/actions/AG                  # Runs DockerUp.sh at the end...
       - id: Fetch-Suite
         name: 'Custom Step [2]: Go grab testing suite from instructor repo'
-        uses: ./github/actions/AG/fetch_suite.sh
+        uses: actions/checkout@v2
+        with:
+          repository: TSSlade/autograder_secrets/   # The (private) repo where our data is living
+          ref: ps2                                  # The specific branch to be checked out
+          token: ${{ secrets.w241_autograder }}     # This PAT needs to be configured in the src repo (i.e. the one mentioned 2 lines up)
+      - id: Copy-Suite
+        name: 'Custom Step [3]: Copy the testing suite from the instructor repo to the ephemeral Docker container'
+        uses: ./github/actions/AG/AG-move-ps2.sh
       - id: Run-Suite
-        name: 'Custom Step [3]: Run Alex's script over student folders'
-        uses: ./github/actions/AG/AG-ps2.sh
+        name: 'Custom Step [4]: Run Alex's script over student folders'
+        uses: ./github/actions/AG/AG-test-ps2.sh
       # Use the output from the `hello` step
-      - name: 'Custom Step [4]: What time did we run this?'
+      - name: 'Custom Step [5]: What time did we run this?'
         run: echo "The time was ${{ steps.Docker-Up.outputs.time }}"
+
+
+    steps:
+      - name: Access contents of private repo
+        # env:
+          # GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        uses: actions/checkout@v2
+        with:
+          repository: TSSlade/autograder_secrets
+          token: ${{ secrets.w241_autograder }}

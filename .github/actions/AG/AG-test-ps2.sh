@@ -1,6 +1,12 @@
 #!/bin/sh -l
 
-ls -lah
+echo "+++++ Running AG-test-ps2.sh +++++"
+echo "What are we working with?"
+echo "Here:"
+ls -lah .
+
+echo "In the Docker volume:"
+ls -lah /github/workspace
 
 for student_repo in ./*/
 do

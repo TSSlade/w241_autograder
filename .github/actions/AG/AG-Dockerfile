@@ -15,10 +15,10 @@ RUN mkdir /tslade
 COPY test_ps2_answers.R /test_ps2_answers.R
 
 # Executing Alex's shell script
-COPY ./AG-DockerUp.sh /AG-DockerUp.sh
-RUN chmod +x /AG-DockerUp.sh
+COPY ./AG-docker-up.sh /AG-docker-up.sh
+RUN chmod +x /AG-docker-up.sh
 
 RUN ls -lah
 
 # Code file to execute when the docker container starts up (`entrypoint.sh`)
-ENTRYPOINT ["/AG-DockerUp.sh"]
+ENTRYPOINT ["/AG-docker-up.sh"]
