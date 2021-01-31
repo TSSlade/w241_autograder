@@ -22,13 +22,12 @@ jobs:                           # What actually needs done? 1+ jobs can be added
       - id: copy-answers-to-home
         name: 'Custom Step [1]: Move answers to persistent HOME'
         shell: bash
-        # run: echo "${GITHUB_ACTION_PATH}"
         run: |
           sudo apt-get install tree
-          echo "GitHub Action filesystem"
-          echo "GH Workspace for local repo:"
-          tree -L 2 "${GITHUB_WORKSPACE}"
           cp -r "${GITHUB_WORKSPACE}/${GITHUB_ACTOR}" "${HOME}/${GITHUB_ACTOR}"
+        # echo "GitHub Action filesystem"
+        # echo "GH Workspace for local repo:"
+        # tree -L 2 "${GITHUB_WORKSPACE}"
 
       - id: fetch-test-suite-from-irepo
         name: 'Custom Step [2]: Go grab testing suite from instructor repo'
@@ -39,74 +38,41 @@ jobs:                           # What actually needs done? 1+ jobs can be added
           token: ${{ secrets.w241_autograder }}     # This PAT needs to be configured in the src repo (i.e. the one mentioned 2 lines up)
 
       - id: copy-suite-to-home
-        name: "Custom Step [3]: Bringing back the testing suite"
+        name: "Custom Step [3]: Setting up the testing suite"
         shell: bash
         run: |
-          echo "GH HOME:"
-          tree -L 3 "${HOME}"
-          echo "Currently here:" `pwd`
           mkdir "${GITHUB_WORKSPACE}/student"
           cp -r "${HOME}/${GITHUB_ACTOR}" "${GITHUB_WORKSPACE}/student/${GITHUB_ACTOR}"
-          tree -L 2 "${GITHUB_WORKSPACE}"
-      # - id: push-home-as-artifact
-      #   name: 'Custom Step [4]: Stashing the assets where we can later retrieve them'
-      #   uses: actions/upload-artifact@v2
-      #   with:
-      #     name: testing-suite-pkg
-      #     path: "./ps2/"
-      #     retention-days: 1
-
-      # - name: '`Checkout` hook (standard) - REQd for EACH local action'    # Shows as a foldable/expandable entry in the Runs log interface
-      #   uses: actions/checkout@v2
-
-      # - id: docker-up
-      #   name: 'Custom Step [5]: Spinning up Docker Container via AG/action.yml'
-      #   uses: ./.github/actions/AG                  # Runs DockerUp.sh at the end...
-
-      # - id: pull-artifact
-      #   name: 'Custom Step [6]: Retrieving the assets we earlier stored'
-      #   uses: actions/download-artifact@v2
-      #   with:
-      #     name: testing-suite-pkg
-      #     path: "./ps2"
+        # echo "GH HOME:"
+        # tree -L 3 "${HOME}"
+        # echo "Currently here:" `pwd`
+        # tree -L 2 "${GITHUB_WORKSPACE}"
 
       - id: execute-testing-suite
         name: 'Custom Step [7]: Running test suite'
         shell: bash
         # run: echo "${GITHUB_ACTION_PATH}"
         run: |
-          echo "Contents of -student- folder:"
-          ls -lah ./student/${GITHUB_ACTOR}
           cd "./ps2"
           echo "Currently in:" `pwd`
-          tree -L 2 .
           cp -r "../student/${GITHUB_ACTOR}/questions/" "./answers/"
           chmod +x ./alex.R
-          ls -lah .
           echo "Launch test suite"
           Rscript -e "library(knitr); library(testthat); loadedNamespaces(); source('./alex.R');"
           echo "Finished with ${GITHUB_ACTOR}"
-      # echo 'cp -r "./${GITHUB_ACTOR}/." "./ps2/student/${GITHUB_ACTOR}/"'
-      # cp -r "./${GITHUB_ACTOR}/." "./ps2/student/${GITHUB_ACTOR}/"
-      # echo "Confirming successful:"
-      # tree -L 3 "./ps2/student/"
-    # Rscript -e "loadedNamespaces()"
-    # Rscript -e "library(knitr)"
-    # Rscript -e "library(testthat)"
-    # echo "Did we successfully load those?"
-    # Rscript -e "loadedNamespaces()"
-    # Rscript -e "knitr::purl('./ps2_answers.Rmd')"
-    # Rscript -e "testthat::test_file('test_ps2_answers.R')" >> test_results.md
-    # cat test_results.md
+        # echo "Contents of -student- folder:"
+        # ls -lah ./student/${GITHUB_ACTOR}
+        # tree -L 2 .
+        # ls -lah .
 
-  delete-artifacts:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: kolpav/purge-artifacts-action@v1
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          # expire-in: 7days # Set this to 0 to delete all artifacts
-          expire-in: 0 # Set this to 0 to delete all artifacts
+# delete-artifacts:
+#   runs-on: ubuntu-latest
+#   steps:
+#     - uses: kolpav/purge-artifacts-action@v1
+#       with:
+#         token: ${{ secrets.GITHUB_TOKEN }}
+#         # expire-in: 7days # Set this to 0 to delete all artifacts
+#         expire-in: 0 # Set this to 0 to delete all artifacts
 
 
 # cleanup_job:
