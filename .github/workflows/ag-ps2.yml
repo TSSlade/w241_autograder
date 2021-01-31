@@ -45,27 +45,31 @@ jobs:                           # What actually needs done? 1+ jobs can be added
           cp -r "${HOME}/${GITHUB_ACTOR}" "${GITHUB_WORKSPACE}/student/${GITHUB_ACTOR}"
           cp -r "${GITHUB_WORKSPACE}/student/${GITHUB_ACTOR}/questions/" "${GITHUB_WORKSPACE}/ps2/answers/"
           echo "Student's work should now be in 'GITHUB_WORKSPACE':"
-          tree -L 2 "${GITHUB_WORKSPACE}"
+          tree -L 4 "${GITHUB_WORKSPACE}"
         # echo "GH HOME:"
         # tree -L 3 "${HOME}"
         # echo "Currently here:" `pwd`
 
       - id: staging-testing-suite
-        name: 'Custom Step [4]: Running test suite'
+        name: 'Custom Step [4]: Setting up testing suite'
+        shell: bash
+        # run: echo "${GITHUB_ACTION_PATH}"
+        run: |
+          mv "${GITHUB_WORKSPACE}/ps2/ps2_answers.R" "${GITHUB_WORKSPACE}/ps2/testing_room/ps2_answers.R"
+          mv "${GITHUB_WORKSPACE}/ps2/ps2_answers.Rmd" "${GITHUB_WORKSPACE}/ps2/testing_room/ps2_answers.Rmd"
+          chmod +x "${GITHUB_WORKSPACE}/ps2/alex.R"
+          Rscript -e "library(knitr); library(testthat); loadedNamespaces(); source('./alex.R');"
+          echo "Finished with ${GITHUB_ACTOR}"
+
+      - id: running-testing-suite
+        name: 'Custom Step [5]: Executing testing suite'
         shell: bash
         # run: echo "${GITHUB_ACTION_PATH}"
         run: |
           cd "./ps2"
           echo "Currently in:" `pwd`
-          chmod +x ./alex.R
           Rscript -e "library(knitr); library(testthat); loadedNamespaces(); source('./alex.R');"
           echo "Finished with ${GITHUB_ACTOR}"
-        # echo "Launch test suite"
-        # cp -r "../student/${GITHUB_ACTOR}/questions/" "./answers/"
-        # echo "Contents of -student- folder:"
-        # ls -lah ./student/${GITHUB_ACTOR}
-        # tree -L 2 .
-        # ls -lah .
 
 # delete-artifacts:
 #   runs-on: ubuntu-latest
