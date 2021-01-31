@@ -87,7 +87,8 @@ jobs:                           # What actually needs done? 1+ jobs can be added
           echo "Currently in:" `pwd`
           tree -L 2 .
           cp -r "./student/${GITHUB_ACTOR}/questions/" "./answers/"
-          Rscript -e "alex.R"
+          chmod +x ./alex.R
+          ./alex.R
           echo "Finished with ${GITHUB_ACTOR}"
     # Rscript -e "loadedNamespaces()"
     # Rscript -e "library(knitr)"
