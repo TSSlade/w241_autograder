@@ -77,9 +77,13 @@ jobs:                           # What actually needs done? 1+ jobs can be added
         shell: bash
         # run: echo "${GITHUB_ACTION_PATH}"
         run: |
+          echo "Currently in:""
+          tree -L 2 .
           cp -r "${HOME}/${GITHUB_ACTOR}" "${HOME}/ps2/student/${GITHUB_ACTOR}"
           tree -L 2 "${HOME}/ps2/student/${GITHUB_ACTOR}"
           cd "${HOME}/ps2/student/${GITHUB_ACTOR}"
+          echo "Currently in:"
+          pwd
           cp ../questions/* ./answers/
           Rscript -e "knitr::purl('./ps2_answers.Rmd')"
           Rscript -e "testthat::test_file('test_ps2_answers.R')" >> test_results.md
