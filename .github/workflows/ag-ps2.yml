@@ -90,6 +90,7 @@ jobs:                           # What actually needs done? 1+ jobs can be added
           chmod +x ./alex.R
           ls -lah .
           echo "Launch test suite"
+          docker ps -a
           ./alex.R
           echo "Finished with ${GITHUB_ACTOR}"
     # Rscript -e "loadedNamespaces()"

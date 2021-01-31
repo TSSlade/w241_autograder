@@ -1,6 +1,9 @@
 #!/bin/sh -l
 
 echo "Docker container is up!"
+echo "We're here:" `pwd`
+touch still-here-i-hope.txt
+
 # echo "++++ We're here:"
 # pwd
 # ls -lah
