@@ -8,6 +8,8 @@ cd ../
 echo "Up 1:"
 pwd
 tree -L 2
+echo "In .github/home:"
+ls -lah ./github/home
 
 # echo "And here's the stuff in the Auntie Workspace volume:"
 # # tree -L "${HOME}"
