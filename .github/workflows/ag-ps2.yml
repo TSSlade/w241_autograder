@@ -79,11 +79,6 @@ jobs:                           # What actually needs done? 1+ jobs can be added
         run: |
           echo "Currently in:" `pwd`
           tree -L 2 .
-        # echo 'cp -r "./ps2" "${HOME}/ps2"'
-        # cp -r "./ps2" "${HOME}/ps2"
-        # echo "Confirming successful:"
-        # cd "${HOME}"
-        # tree -L 2 .
           echo 'cp -r "./${GITHUB_ACTOR}/." "./ps2/student/${GITHUB_ACTOR}/"'
           cp -r "./${GITHUB_ACTOR}/." "./ps2/student/${GITHUB_ACTOR}/"
           echo "Confirming successful:"
