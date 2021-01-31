@@ -55,7 +55,7 @@ jobs:                           # What actually needs done? 1+ jobs can be added
         uses: actions/upload-artifact@v2
         with:
           name: testing-suite-pkg
-          path: "${HOME}/ps2/"
+          path: "/home/runner/ps2/"
           retention-days: 1
 
       - name: '`Checkout` hook (standard) - REQd for EACH local action'    # Shows as a foldable/expandable entry in the Runs log interface
