@@ -43,7 +43,7 @@ jobs:                           # What actually needs done? 1+ jobs can be added
           mkdir -p ${GITHUB_WORKSPACE}/ps2/testing_center/answers
           cp ${GITHUB_WORKSPACE}/student/${GITHUB_ACTOR}/questions/* "${GITHUB_WORKSPACE}/ps2/testing_center/answers"
           echo "Student's work should now be in 'GITHUB_WORKSPACE':"
-          tree -L 4 "${GITHUB_WORKSPACE}"
+        # tree -L 4 "${GITHUB_WORKSPACE}"
 
       - id: staging-testing-suite
         name: 'Custom Step [4]: Setting up testing suite'
@@ -54,18 +54,18 @@ jobs:                           # What actually needs done? 1+ jobs can be added
           mv "${GITHUB_WORKSPACE}/ps2/test_ps2_answers.R" "${GITHUB_WORKSPACE}/ps2/testing_center/test_ps2_answers.R"
           mv "${GITHUB_WORKSPACE}/ps2/alex.R" "${GITHUB_WORKSPACE}/ps2/testing_center/alex.R"
           chmod +x "${GITHUB_WORKSPACE}/ps2/testing_center/alex.R"
-          echo "Final pre-testing status:"
-          tree -L 4
+        # echo "Final pre-testing status:"
+        # tree -L 4
 
       - id: running-testing-suite
         name: 'Custom Step [5]: Executing testing suite'
         shell: bash
         run: |
           cd "./ps2/testing_center"
-          echo "Currently in:" `pwd`
-          tree -L 4 ${GITHUB_WORKSPACE}
           Rscript -e "library(knitr); library(testthat); loadedNamespaces(); source('./alex.R');"
           echo "Finished with ${GITHUB_ACTOR}"
+        # echo "Currently in:" `pwd`
+        # tree -L 4 ${GITHUB_WORKSPACE}
 
 # delete-artifacts:
 #   runs-on: ubuntu-latest
