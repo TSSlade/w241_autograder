@@ -12,6 +12,8 @@ echo "In github/home:"
 ls -lah ./home
 echo "In ${HOME}:"
 ls -lah $HOME
+echo "In /home/runner/"
+tree -L 1 /home/runner
 
 # echo "And here's the stuff in the Auntie Workspace volume:"
 # # tree -L "${HOME}"
