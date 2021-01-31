@@ -53,27 +53,27 @@ jobs:                           # What actually needs done? 1+ jobs can be added
           tree -L 3 "${HOME}"
           echo "Currently here:" `pwd`
 
-      - id: push-home-as-artifact
-        name: 'Custom Step [4]: Stashing the assets where we can later retrieve them'
-        uses: actions/upload-artifact@v2
-        with:
-          name: testing-suite-pkg
-          path: "./ps2/"
-          retention-days: 1
+      # - id: push-home-as-artifact
+      #   name: 'Custom Step [4]: Stashing the assets where we can later retrieve them'
+      #   uses: actions/upload-artifact@v2
+      #   with:
+      #     name: testing-suite-pkg
+      #     path: "./ps2/"
+      #     retention-days: 1
 
-      - name: '`Checkout` hook (standard) - REQd for EACH local action'    # Shows as a foldable/expandable entry in the Runs log interface
-        uses: actions/checkout@v2
+      # - name: '`Checkout` hook (standard) - REQd for EACH local action'    # Shows as a foldable/expandable entry in the Runs log interface
+      #   uses: actions/checkout@v2
 
       # - id: docker-up
       #   name: 'Custom Step [5]: Spinning up Docker Container via AG/action.yml'
       #   uses: ./.github/actions/AG                  # Runs DockerUp.sh at the end...
 
-      - id: pull-artifact
-        name: 'Custom Step [6]: Retrieving the assets we earlier stored'
-        uses: actions/download-artifact@v2
-        with:
-          name: testing-suite-pkg
-          path: "./ps2"
+      # - id: pull-artifact
+      #   name: 'Custom Step [6]: Retrieving the assets we earlier stored'
+      #   uses: actions/download-artifact@v2
+      #   with:
+      #     name: testing-suite-pkg
+      #     path: "./ps2"
 
       - id: execute-testing-suite
         name: 'Custom Step [7]: Running test suite'
