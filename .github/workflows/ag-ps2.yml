@@ -25,10 +25,6 @@ jobs:                           # What actually needs done? 1+ jobs can be added
         run: |
           sudo apt-get -qq install tree
           mv "${GITHUB_WORKSPACE}/${GITHUB_ACTOR}/" "${HOME}/${GITHUB_ACTOR}/"
-        # cp -r "${GITHUB_WORKSPACE}/${GITHUB_ACTOR}" "${HOME}/${GITHUB_ACTOR}"
-        # echo "GitHub Action filesystem"
-        # echo "GH Workspace for local repo:"
-        # tree -L 2 "${GITHUB_WORKSPACE}"
 
       - id: fetch-test-suite-from-irepo
         name: 'Custom Step [2]: Go grab testing suite from instructor repo'
@@ -47,29 +43,20 @@ jobs:                           # What actually needs done? 1+ jobs can be added
           cp ${GITHUB_WORKSPACE}/student/${GITHUB_ACTOR}/questions/* "${GITHUB_WORKSPACE}/ps2/answers"
           echo "Student's work should now be in 'GITHUB_WORKSPACE':"
           tree -L 4 "${GITHUB_WORKSPACE}"
-        # tree -L 4 "${GITHUB_WORKSPACE}"
-        # cp -r "${HOME}/${GITHUB_ACTOR}" "${GITHUB_WORKSPACE}/student/${GITHUB_ACTOR}"
-        # cp -r "${GITHUB_WORKSPACE}/student/${GITHUB_ACTOR}/questions/" "${GITHUB_WORKSPACE}/ps2/answers/"
-        # echo "GH HOME:"
-        # tree -L 3 "${HOME}"
-        # echo "Currently here:" `pwd`
 
       - id: staging-testing-suite
         name: 'Custom Step [4]: Setting up testing suite'
         shell: bash
-        # run: echo "${GITHUB_ACTION_PATH}"
         run: |
           mkdir "${GITHUB_WORKSPACE}/ps2/testing_room"
           mv "${GITHUB_WORKSPACE}/ps2/ps2_answers.R" "${GITHUB_WORKSPACE}/ps2/testing_room/ps2_answers.R"
           mv "${GITHUB_WORKSPACE}/ps2/ps2_answers.Rmd" "${GITHUB_WORKSPACE}/ps2/testing_room/ps2_answers.Rmd"
           mv "${GITHUB_WORKSPACE}/ps2/alex.R" "${GITHUB_WORKSPACE}/ps2/testing_room/alex.R"
           chmod +x "${GITHUB_WORKSPACE}/ps2/testing_room/alex.R"
-          tree -L 4 "${GITHUB_WORKSPACE}"
 
       - id: running-testing-suite
         name: 'Custom Step [5]: Executing testing suite'
         shell: bash
-        # run: echo "${GITHUB_ACTION_PATH}"
         run: |
           cd "./ps2/testing_room"
           echo "Currently in:" `pwd`
