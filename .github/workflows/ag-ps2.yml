@@ -16,11 +16,11 @@ jobs:                           # What actually needs done? 1+ jobs can be added
     steps:
       # To use this repository's private action,
       # you must check out the repository
-      - name: 'Running `Checkout` hook'    #  (Standard) - REQd for EACH local action. These names shows as a foldable/expandable entry in the Runs log interface
+      - name: 'Running -Checkout- hook'    #  (Standard) - REQd for EACH local action. These names shows as a foldable/expandable entry in the Runs log interface
         uses: actions/checkout@v2
 
       - id: copy-answers-to-home
-        name: 'Custom Step [1]: Move student's answers to safe HOME'
+        name: 'Custom Step [1]: Move student answers to safe HOME'
         shell: bash
         run: |
           sudo apt-get install tree
