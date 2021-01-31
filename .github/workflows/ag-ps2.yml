@@ -75,21 +75,21 @@ jobs:                           # What actually needs done? 1+ jobs can be added
         shell: bash
         # run: echo "${GITHUB_ACTION_PATH}"
         run: |
-          echo "Currently in:" `pwd`
-          tree -L 2 .
-          echo 'cp -r "./${GITHUB_ACTOR}/." "./ps2/student/${GITHUB_ACTOR}/"'
-          cp -r "./${GITHUB_ACTOR}/." "./ps2/student/${GITHUB_ACTOR}/"
-          echo "Confirming successful:"
-          tree -L 3 "./ps2/student/"
+          echo "Contents of -student- folder:"
+          ls -lah ./student/${GITHUB_ACTOR}
           cd "./ps2"
           echo "Currently in:" `pwd`
           tree -L 2 .
-          cp -r "./student/${GITHUB_ACTOR}/questions/" "./answers/"
+          cp -r "../student/${GITHUB_ACTOR}/questions/" "./answers/"
           chmod +x ./alex.R
           ls -lah .
           echo "Launch test suite"
           Rscript -e "library(knitr); library(testthat); loadedNamespaces(); load('.alex.R');"
           echo "Finished with ${GITHUB_ACTOR}"
+      # echo 'cp -r "./${GITHUB_ACTOR}/." "./ps2/student/${GITHUB_ACTOR}/"'
+      # cp -r "./${GITHUB_ACTOR}/." "./ps2/student/${GITHUB_ACTOR}/"
+      # echo "Confirming successful:"
+      # tree -L 3 "./ps2/student/"
     # Rscript -e "loadedNamespaces()"
     # Rscript -e "library(knitr)"
     # Rscript -e "library(testthat)"
