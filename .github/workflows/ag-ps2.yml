@@ -16,11 +16,11 @@ jobs:                           # What actually needs done? 1+ jobs can be added
     steps:
       # To use this repository's private action,
       # you must check out the repository
-      - name: '`Checkout` hook (standard) - REQd for EACH local action'    # Shows as a foldable/expandable entry in the Runs log interface
+      - name: 'Running `Checkout` hook'    #  (Standard) - REQd for EACH local action. These names shows as a foldable/expandable entry in the Runs log interface
         uses: actions/checkout@v2
 
       - id: copy-answers-to-home
-        name: 'Custom Step [1]: Move answers to persistent HOME'
+        name: 'Custom Step [1]: Move student's answers to safe HOME'
         shell: bash
         run: |
           sudo apt-get install tree
@@ -37,29 +37,31 @@ jobs:                           # What actually needs done? 1+ jobs can be added
           ref: ps2                                  # The specific branch to be checked out
           token: ${{ secrets.w241_autograder }}     # This PAT needs to be configured in the src repo (i.e. the one mentioned 2 lines up)
 
-      - id: copy-suite-to-home
-        name: "Custom Step [3]: Setting up the testing suite"
+      - id: staging-student-work
+        name: "Custom Step [3]: Retrieve student's work from storage, stage in testing area"
         shell: bash
         run: |
           mkdir "${GITHUB_WORKSPACE}/student"
           cp -r "${HOME}/${GITHUB_ACTOR}" "${GITHUB_WORKSPACE}/student/${GITHUB_ACTOR}"
+          cp -r "${GITHUB_WORKSPACE}/student/${GITHUB_ACTOR}/questions/" "${GITHUB_WORKSPACE}/ps2/answers/"
+          echo "Student's work should now be in 'GITHUB_WORKSPACE':"
+          tree -L 2 "${GITHUB_WORKSPACE}"
         # echo "GH HOME:"
         # tree -L 3 "${HOME}"
         # echo "Currently here:" `pwd`
-        # tree -L 2 "${GITHUB_WORKSPACE}"
 
-      - id: execute-testing-suite
-        name: 'Custom Step [7]: Running test suite'
+      - id: staging-testing-suite
+        name: 'Custom Step [4]: Running test suite'
         shell: bash
         # run: echo "${GITHUB_ACTION_PATH}"
         run: |
           cd "./ps2"
           echo "Currently in:" `pwd`
-          cp -r "../student/${GITHUB_ACTOR}/questions/" "./answers/"
           chmod +x ./alex.R
-          echo "Launch test suite"
           Rscript -e "library(knitr); library(testthat); loadedNamespaces(); source('./alex.R');"
           echo "Finished with ${GITHUB_ACTOR}"
+        # echo "Launch test suite"
+        # cp -r "../student/${GITHUB_ACTOR}/questions/" "./answers/"
         # echo "Contents of -student- folder:"
         # ls -lah ./student/${GITHUB_ACTOR}
         # tree -L 2 .
