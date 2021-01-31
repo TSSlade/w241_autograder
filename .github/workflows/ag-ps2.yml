@@ -12,6 +12,7 @@ jobs:                           # What actually needs done? 1+ jobs can be added
   ag-ps2:                       # Name for your consumption only: is not obviously exposed anywhere
     name: 'Autograding PS2'   # Shows in the 'Jobs' section (left sidebar) of the Actions>Runs view
     runs-on: ubuntu-latest
+    container: dalexhughes/w241
     steps:
       # To use this repository's private action,
       # you must check out the repository
@@ -61,9 +62,9 @@ jobs:                           # What actually needs done? 1+ jobs can be added
       - name: '`Checkout` hook (standard) - REQd for EACH local action'    # Shows as a foldable/expandable entry in the Runs log interface
         uses: actions/checkout@v2
 
-      - id: docker-up
-        name: 'Custom Step [5]: Spinning up Docker Container via AG/action.yml'
-        uses: ./.github/actions/AG                  # Runs DockerUp.sh at the end...
+      # - id: docker-up
+      #   name: 'Custom Step [5]: Spinning up Docker Container via AG/action.yml'
+      #   uses: ./.github/actions/AG                  # Runs DockerUp.sh at the end...
 
       - id: pull-artifact
         name: 'Custom Step [6]: Retrieving the assets we earlier stored'
