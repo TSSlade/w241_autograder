@@ -84,8 +84,8 @@ jobs:                           # What actually needs done? 1+ jobs can be added
           echo "Confirming successful:"
           cd "${HOME}"
           tree -L 1 .
-          echo 'cp -r "${GITHUB_WORKSPACE}/${GITHUB_ACTOR}" "${HOME}/ps2/student/${GITHUB_ACTOR}"'
-          cp -r "${GITHUB_WORKSPACE}/${GITHUB_ACTOR}" "${HOME}/ps2/student/${GITHUB_ACTOR}"
+          echo 'cp -r "${GITHUB_WORKSPACE}/${GITHUB_ACTOR}/" "${HOME}/ps2/student/${GITHUB_ACTOR}/"'
+          cp -r "${GITHUB_WORKSPACE}/${GITHUB_ACTOR}/" "${HOME}/ps2/student/${GITHUB_ACTOR}/"
           echo "Confirming successful:"
           tree -L 1 "${HOME}/ps2/student/"
           cd "${HOME}/ps2/student/${GITHUB_ACTOR}"
