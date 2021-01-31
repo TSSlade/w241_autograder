@@ -45,7 +45,7 @@ jobs:                           # What actually needs done? 1+ jobs can be added
           mkdir "${GITHUB_WORKSPACE}/student"
           tree -L 4 "${GITHUB_WORKSPACE}"
           mv "${HOME}/${GITHUB_ACTOR}/" "${GITHUB_WORKSPACE}/student/${GITHUB_ACTOR}/"
-          mv -f "${GITHUB_WORKSPACE}/student/${GITHUB_ACTOR}/questions/" "${GITHUB_WORKSPACE}/ps2/answers"
+          cp -R "${GITHUB_WORKSPACE}/student/${GITHUB_ACTOR}/questions/" "${GITHUB_WORKSPACE}/ps2/answers"
           echo "Student's work should now be in 'GITHUB_WORKSPACE':"
           tree -L 4 "${GITHUB_WORKSPACE}"
         # cp -r "${HOME}/${GITHUB_ACTOR}" "${GITHUB_WORKSPACE}/student/${GITHUB_ACTOR}"
