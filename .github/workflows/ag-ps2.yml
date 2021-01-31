@@ -79,7 +79,12 @@ jobs:                           # What actually needs done? 1+ jobs can be added
         run: |
           cp -r "${HOME}/${GITHUB_ACTOR}" "${HOME}/ps2/student/${GITHUB_ACTOR}"
           tree -L 2 "${HOME}/ps2/student/${GITHUB_ACTOR}"
-          sh "${HOME}/ps2/test_ps2.sh"
+          cd "${HOME}/ps2/student/${GITHUB_ACTOR}"
+          cp ../questions/* ./answers/
+          Rscript -e "knitr::purl('./ps2_answers.Rmd')"
+          Rscript -e "testthat::test_file('test_ps2_answers.R')" >> test_results.md
+          cat test_results.md
+          echo "Finished with ${GITHUB_ACTOR}"
 
     # chmod +x "${GITHUB_WORKSPACE}/../.github/actions/AG/AG-move-ps2.sh"
     # # run script
