@@ -70,7 +70,7 @@ jobs:                           # What actually needs done? 1+ jobs can be added
         uses: actions/download-artifact@v2
         with:
           name: testing-suite-pkg
-          path: "${HOME}"
+          path: "./ps2"
 
       - id: execute-testing-suite
         name: 'Custom Step [7]: Running test suite'
@@ -78,38 +78,37 @@ jobs:                           # What actually needs done? 1+ jobs can be added
         # run: echo "${GITHUB_ACTION_PATH}"
         run: |
           echo "Currently in:"
+          pwd
           tree -L 2 .
           cp -r "${HOME}/${GITHUB_ACTOR}" "${HOME}/ps2/student/${GITHUB_ACTOR}"
           tree -L 2 "${HOME}/ps2/student/${GITHUB_ACTOR}"
           cd "${HOME}/ps2/student/${GITHUB_ACTOR}"
           echo "Currently in:"
           pwd
-          cp ../questions/* ./answers/
+          cp -r "../questions/" "./answers/"
           Rscript -e "knitr::purl('./ps2_answers.Rmd')"
           Rscript -e "testthat::test_file('test_ps2_answers.R')" >> test_results.md
           cat test_results.md
           echo "Finished with ${GITHUB_ACTOR}"
 
-    # chmod +x "${GITHUB_WORKSPACE}/../.github/actions/AG/AG-move-ps2.sh"
-    # # run script
-    # "${GITHUB_WORKSPACE}/.github/actions/AG/AG-move-ps2.sh"
-
-    #   # - id: Run-Suite
-    #   #   name: 'Custom Step [4]: Run Alex's script over student folders'
-    #   #   shell: bash
-    #   #   run: |
-    #   #     sh .github/actions/AG/AG-test-ps2.sh
-    #   # Use the output from the `hello` step
-
-    #   - name: 'Custom Step [5]: What time did we run this?'
-    #     run: echo "The time was ${{ steps.Docker-Up.outputs.time }}"
+  delete-artifacts:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: kolpav/purge-artifacts-action@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          # expire-in: 7days # Set this to 0 to delete all artifacts
+          expire-in: 0 # Set this to 0 to delete all artifacts
 
 
-    # # steps:
-    # #   - name: Access contents of private repo
-    # #     # env:
-    # #       # GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    # #     uses: actions/checkout@v2
-    # #     with:
-    # #       repository: TSSlade/autograder_secrets
-    # #       token: ${{ secrets.w241_autograder }}
+# cleanup_job:
+#     needs: [your_last_job]
+#     if: always()
+#     runs-on: ubuntu-latest
+#     steps:
+#     - name: call webhook to delete artifacts
+#       env:
+#         FOR_WEBHOOKS_SECRET: ${{ secrets.FOR_WEBHOOKS_SECRET }}
+#       run: |
+#         echo "::add-mask::$FOR_WEBHOOKS_SECRET"
+#         curl --verbose --fail --show-error --location --request POST "https://api.github.com/repos/$GITHUB_REPOSITORY/dispatches" --header "Authorization: token $FOR_WEBHOOKS_SECRET" --header 'Content-Type: application/json' --header 'Accept: application/vnd.github.everest-preview+json' --data-raw "{ \"event_type\": \"delete_all_artifacts\", \"client_payload\": {\"parent_runid\": \"$GITHUB_RUN_ID\", \"parent_repo\": \"$GITHUB_REPOSITORY\"} }"
