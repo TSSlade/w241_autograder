@@ -79,19 +79,24 @@ jobs:                           # What actually needs done? 1+ jobs can be added
         run: |
           echo "Currently in:" `pwd`
           tree -L 2 .
-          echo 'cp -r "./ps2" "${HOME}/ps2"'
-          cp -r "./ps2" "${HOME}/ps2"
+        # echo 'cp -r "./ps2" "${HOME}/ps2"'
+        # cp -r "./ps2" "${HOME}/ps2"
+        # echo "Confirming successful:"
+          # cd "${HOME}"
+          # tree -L 2 .
+          echo 'cp -r "./${GITHUB_ACTOR}/." "./ps2/student/${GITHUB_ACTOR}/"'
+          cp -r "./${GITHUB_ACTOR}/." "./ps2/student/${GITHUB_ACTOR}/"
           echo "Confirming successful:"
-          cd "${HOME}"
-          tree -L 2 .
-          echo 'cp -r "${GITHUB_WORKSPACE}/${GITHUB_ACTOR}/" "${HOME}/ps2/student/${GITHUB_ACTOR}/"'
-          cp -r "${GITHUB_WORKSPACE}/${GITHUB_ACTOR}/" "${HOME}/ps2/student/${GITHUB_ACTOR}/"
-          echo "Confirming successful:"
-          tree -L 2 "${HOME}/ps2/student/"
-          cd "${HOME}/ps2"
+          tree -L 3 "./ps2/student/"
+          cd "./ps2"
           echo "Currently in:" `pwd`
           tree -L 2 .
           cp -r "./student/${GITHUB_ACTOR}/questions/" "./answers/"
+          Rscript -e "loadedNamespaces()"
+          Rscript -e "library(knitr)"
+          Rscript -e "library(testthat)"
+          echo "Did we successfully load those?"
+          Rscript -e "loadedNamespaces()"
           Rscript -e "knitr::purl('./ps2_answers.Rmd')"
           Rscript -e "testthat::test_file('test_ps2_answers.R')" >> test_results.md
           cat test_results.md
