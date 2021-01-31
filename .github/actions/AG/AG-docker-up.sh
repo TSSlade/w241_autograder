@@ -8,8 +8,8 @@ cd ../
 echo "Up 1:"
 pwd
 tree -L 2
-echo "In .github/home:"
-ls -lah ./github/home
+echo "In github/home:"
+ls -lah ./home
 echo "In ${HOME}:"
 ls -lah $HOME
 
