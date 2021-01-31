@@ -51,6 +51,7 @@ jobs:                           # What actually needs done? 1+ jobs can be added
           cp -r "${HOME}/${GITHUB_ACTOR}" "${HOME}/ps2/student/${GITHUB_ACTOR}"
           echo "GH HOME:"
           tree -L 3 "${HOME}"
+          echo "Currently here:" `pwd`
 
       - id: push-home-as-artifact
         name: 'Custom Step [4]: Stashing the assets where we can later retrieve them'
