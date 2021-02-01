@@ -62,8 +62,8 @@ jobs:                           # What actually needs done? 1+ jobs can be added
         shell: bash
         run: |
           cd "./ps2/testing_center"
-          Rscript -e "library(knitr); library(testthat); loadedNamespaces(); source('./alex.R');" >> "${GITHUB_WORKSPACE}/ps2/testing_center/test_results_${GITHUB_ACTOR}_${GITHUB_RUN_ID}.md"
-          cat "${GITHUB_WORKSPACE}/ps2/testing_center/test_results_${GITHUB_ACTOR}_${GITHUB_RUN_ID}.md"
+          Rscript -e "library(knitr); library(testthat); loadedNamespaces(); source('./alex.R');" >> "${{ github.workspace }}/ps2/testing_center/test_results_${{ github.actor }}_${{ github.run_id }}.md"
+          cat "${{ github.workspace }}/ps2/testing_center/test_results_${{ github.actor }}_${{ github.run_id }}.md"
           echo "Finished with ${GITHUB_ACTOR}"
         # echo "Currently in:" `pwd`
         # tree -L 4 ${GITHUB_WORKSPACE}
@@ -73,7 +73,7 @@ jobs:                           # What actually needs done? 1+ jobs can be added
         uses: actions/upload-artifact@v2
         with:
           name: testing-suite-pkg
-          path: "${GITHUB_WORKSPACE}/ps2/testing_center/test_results_${GITHUB_ACTOR}_${GITHUB_RUN_ID}.md"
+          path: "${{ github.workspace }}/ps2/testing_center/test_results_${{ github.actor }}_${{ github.run_id }}.md"
           retention-days: 1
 
 
