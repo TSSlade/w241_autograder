@@ -48,20 +48,46 @@ jobs:                           # What actually needs done? 1+ jobs can be added
       # There's a very persnickety arrangement of files implied by the testing suite and answer keys that took a long
       # time to get juuuuuust right. To simplify things, I created a `testing_center` space within the problem set folder
       # (ps2 in this case). It ultimately needs to look like this:
-      # as
-      # as
-      # as
-      # as
-      # as
-      # as
-      # as
-      # as
-      # as
-      # as
-      # as
-      # as
-      # 
+      # .                                             # This is the GITHUB_WORKSPACE
+      # ├── ps2                                       ## This folder is where the magic happens
+      # │   ├── answer key shortcut.txt               ## This comes over with the -pull- from the instructor repo
+      # │   ├── answers                               ## Ibid.
+      # │   │   ├── answer_1.Rmd                      ## |
+      # │   │   ├── answer_2.Rmd                      ## |
+      # │   │   ├── answer_3.Rmd                      ## |
+      # │   │   └── answer_4.Rmd                      ## |
+      # │   ├── data                                  ## Ibid. Must be an aunt/uncle to the student's `answers` folder.
+      # │   │   ├── clingingsmith_2009.csv            ## |
+      # │   │   └── list_data_2019.csv                ## |
+      # │   ├── testing_center                        ## This is what we create as our space to run the testing suite
+      # │   │   ├── answers                           ## This folder (and its contents) began life as the
+      # │   │   │   ├── answer_1.Rmd                  ##      {student}/questions folder in their local repo.
+      # │   │   │   ├── answer_2.Rmd                  ## |
+      # │   │   │   ├── answer_3.Rmd                  ## |
+      # │   │   │   └── answer_4.Rmd                  ## |
+      # │   │   ├── ps2_answers.R                     ## Part of the instructor repo. Must be a sibling to the `answers` folder.
+      # │   │   ├── ps2_answers.Rmd                   ## Ibid.
+      # │   │   ├── run_tests.R                       ## Ibid.
+      # │   │   └── test_ps2_answers.R                ## Ibid.
+      # ...                                           ## Some stuff here that can be elided b/c it won't be in the final version and is not used
+      # └── student                                   ## This folder was created by us to hold the contents of the student's local repo
+      #     └── TSSlade                               ## ...and this is the student's local repo. ${GITHUB_ACTOR}
+      #         ├── data                              ## This will never be used by our testing suite. We can disregard.
+      #         │   ├── clingingsmith_2009.csv        ## Ibid.
+      #         │   └── list_data_2019.csv            ## Ibid.
+      #         ├── ps2.md                            ## Ibid.
+      #         ├── ps2.Rmd                           ## Ibid.
+      #         └── questions                         ## This folder is what gets copied up into our testing_center and tested
+      #             ├── answer_1.Rmd                  ## |
+      #             ├── answer_2.Rmd                  ## |
+      #             ├── answer_3.Rmd                  ## |
+      #             └── answer_4.Rmd                  ## |
 
+
+      # If you come back to troubleshoot later, toss in
+      #   `echo "Student's work should now be in 'GITHUB_WORKSPACE':`
+      #   `tree -L 4 "${GITHUB_WORKSPACE}"`
+      # at the end of the bash shell commands
       - id: staging-student-work
         name: "Custom Step [3]: Retrieve student's work from storage, stage in testing area"
         shell: bash
@@ -70,9 +96,11 @@ jobs:                           # What actually needs done? 1+ jobs can be added
           mv "${HOME}/${GITHUB_ACTOR}/" "${GITHUB_WORKSPACE}/student/${GITHUB_ACTOR}/"
           mkdir -p ${GITHUB_WORKSPACE}/ps2/testing_center/answers
           cp ${GITHUB_WORKSPACE}/student/${GITHUB_ACTOR}/questions/* "${GITHUB_WORKSPACE}/ps2/testing_center/answers"
-          echo "Student's work should now be in 'GITHUB_WORKSPACE':"
-        # tree -L 4 "${GITHUB_WORKSPACE}"
 
+      # If you come back to troubleshoot later, toss in
+      #   `echo "Final pre-testing status:"`
+      #   `tree -L 4`
+      # at the end of the bash shell commands
       - id: staging-testing-suite
         name: 'Custom Step [4]: Set up testing suite'
         shell: bash
@@ -82,8 +110,6 @@ jobs:                           # What actually needs done? 1+ jobs can be added
           mv "${GITHUB_WORKSPACE}/ps2/test_ps2_answers.R" "${GITHUB_WORKSPACE}/ps2/testing_center/test_ps2_answers.R"
           mv "${GITHUB_WORKSPACE}/ps2/run_tests.R" "${GITHUB_WORKSPACE}/ps2/testing_center/run_tests.R"
           chmod +x "${GITHUB_WORKSPACE}/ps2/testing_center/run_tests.R"
-          tree -L 4
-        # echo "Final pre-testing status:"
 
       # The results of the testing suite will be logged to the console via the `cat foo` command below. If the student
       # wants to watch it in real-time, they can. But we also write those results to file (rather than just `echo`-ing 
@@ -97,9 +123,6 @@ jobs:                           # What actually needs done? 1+ jobs can be added
           echo "+++ Drumroll please: +++"
           cat "test_results_${{ github.actor }}_${{ github.run_id }}.md"
           echo "Finished with ${GITHUB_ACTOR}"
-        # echo "Currently in:" `pwd`
-        # tree -L 4 ${GITHUB_WORKSPACE}
-        # /usr/lib/R/bin/R --no-echo --no-restore --file=foobar.r
 
       # This uploads the result as an `artifact` that gets attached to that particular `Run` in the repo's
       # `Actions` tab. It is not fully ephemeral, and the retention time can be configured (via the `retention-days`
