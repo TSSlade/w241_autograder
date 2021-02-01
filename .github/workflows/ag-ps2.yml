@@ -10,17 +10,28 @@ on:                             # What is going to trigger this Workflow?
 
 jobs:                           # What actually needs done? 1+ jobs can be added, will run in parallel by default
   ag-ps2:                       # Name for your consumption only: is not obviously exposed anywhere
-    name: 'Autograding PS2'   # Shows in the 'Jobs' section (left sidebar) of the Actions>Runs view
+    name: 'Autograding PS2'     # Shows in the 'Jobs' section (left sidebar) of the Actions>Runs view
     runs-on: ubuntu-latest
+
+    # There are various ways of invoking Dockerized actions, including spinning up a container based on a Dockerfile
+    # as one of your steps. We found that that eventually creates problems with the `user` the shell perceives to
+    # be running the Rscript tasks at the end, which creates problems with keeping the loaded R libraries in memory
+    # and being able to execute `install.packages()` calls internal to the student code.
+    # Using this `container: foo` approach sidesteps all that.
     container: dalexhughes/w241
     steps:
-      # To use this repository's private action,
-      # you must check out the repository
-      - name: 'Running -Checkout- hook'    #  (Standard) - REQd for EACH local action. These names shows as a foldable/expandable entry in the Runs log interface
-        uses: actions/checkout@v2
 
+      # To use any repository's private action rather than a public one,
+      # you must first check out the repository
+      - name: 'Running -Checkout- hook'     #  (Standard) - REQd for EACH local action. These names shows as a foldable/expandable entry in the Runs log interface
+        uses: actions/checkout@v2           # This is a public action available on the GitHub Actions marketplace. Nothing we've developed.
+
+      # Step 2 below (checkout@v2) nukes the current workspace in memory;
+      # if we want access to the -current- workspace (which includes the student's work)
+      # we need to move it someplace that won't get blasted away. To wit, the GitHub Action's
+      # "runner's" HOME directory
       - id: copy-answers-to-home
-        name: 'Custom Step [1]: Move student answers to safe HOME'
+        name: 'Custom Step [1]: Move student answers to safe HOME'  # Name shown as a foldable/expandable entry in the Actions > Runs log interface
         shell: bash
         run: |
           sudo apt-get -qq install tree
@@ -30,9 +41,26 @@ jobs:                           # What actually needs done? 1+ jobs can be added
         name: 'Custom Step [2]: Go grab testing suite from instructor repo'
         uses: actions/checkout@v2
         with:
-          repository: TSSlade/autograder_secrets   # The (private) repo where our data is living
+          repository: TSSlade/autograder_secrets    # The (private) repo where our testing suite and answer keys are living
           ref: ps2                                  # The specific branch to be checked out
           token: ${{ secrets.w241_autograder }}     # This PAT needs to be configured in the src repo (i.e. the one mentioned 2 lines up)
+
+      # There's a very persnickety arrangement of files implied by the testing suite and answer keys that took a long
+      # time to get juuuuuust right. To simplify things, I created a `testing_center` space within the problem set folder
+      # (ps2 in this case). It ultimately needs to look like this:
+      # as
+      # as
+      # as
+      # as
+      # as
+      # as
+      # as
+      # as
+      # as
+      # as
+      # as
+      # as
+      # 
 
       - id: staging-student-work
         name: "Custom Step [3]: Retrieve student's work from storage, stage in testing area"
@@ -54,9 +82,12 @@ jobs:                           # What actually needs done? 1+ jobs can be added
           mv "${GITHUB_WORKSPACE}/ps2/test_ps2_answers.R" "${GITHUB_WORKSPACE}/ps2/testing_center/test_ps2_answers.R"
           mv "${GITHUB_WORKSPACE}/ps2/run_tests.R" "${GITHUB_WORKSPACE}/ps2/testing_center/run_tests.R"
           chmod +x "${GITHUB_WORKSPACE}/ps2/testing_center/run_tests.R"
+          tree -L 4
         # echo "Final pre-testing status:"
-        # tree -L 4
 
+      # The results of the testing suite will be logged to the console via the `cat foo` command below. If the student
+      # wants to watch it in real-time, they can. But we also write those results to file (rather than just `echo`-ing 
+      # to console) so they can be uploaded / retrieved by the student if so desired.
       - id: running-testing-suite
         name: 'Custom Step [5]: Execute testing suite'
         shell: bash
@@ -70,6 +101,10 @@ jobs:                           # What actually needs done? 1+ jobs can be added
         # tree -L 4 ${GITHUB_WORKSPACE}
         # /usr/lib/R/bin/R --no-echo --no-restore --file=foobar.r
 
+      # This uploads the result as an `artifact` that gets attached to that particular `Run` in the repo's
+      # `Actions` tab. It is not fully ephemeral, and the retention time can be configured (via the `retention-days`
+      # key, natch.) Package format is a .zip file, and current testing indicates package size around the tens
+      # of kilobytes, not more.
       - id: upload-test-as-artifact
         name: 'Custom Step [6]: Saving test result as artifact'
         uses: actions/upload-artifact@v2
@@ -77,27 +112,3 @@ jobs:                           # What actually needs done? 1+ jobs can be added
           name: testing-suite-pkg
           path: "${{ github.workspace }}/ps2/testing_center/test_results_${{ github.actor }}_${{ github.run_id }}.md"
           retention-days: 1
-
-
-
-# delete-artifacts:
-#   runs-on: ubuntu-latest
-#   steps:
-#     - uses: kolpav/purge-artifacts-action@v1
-#       with:
-#         token: ${{ secrets.GITHUB_TOKEN }}
-#         # expire-in: 7days # Set this to 0 to delete all artifacts
-#         expire-in: 0 # Set this to 0 to delete all artifacts
-
-
-# cleanup_job:
-#     needs: [your_last_job]
-#     if: always()
-#     runs-on: ubuntu-latest
-#     steps:
-#     - name: call webhook to delete artifacts
-#       env:
-#         FOR_WEBHOOKS_SECRET: ${{ secrets.FOR_WEBHOOKS_SECRET }}
-#       run: |
-#         echo "::add-mask::$FOR_WEBHOOKS_SECRET"
-#         curl --verbose --fail --show-error --location --request POST "https://api.github.com/repos/$GITHUB_REPOSITORY/dispatches" --header "Authorization: token $FOR_WEBHOOKS_SECRET" --header 'Content-Type: application/json' --header 'Accept: application/vnd.github.everest-preview+json' --data-raw "{ \"event_type\": \"delete_all_artifacts\", \"client_payload\": {\"parent_runid\": \"$GITHUB_RUN_ID\", \"parent_repo\": \"$GITHUB_REPOSITORY\"} }"
