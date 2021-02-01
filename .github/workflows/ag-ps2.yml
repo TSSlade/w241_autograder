@@ -1,0 +1,137 @@
+# Adapted from GitHub Actions MWE for Docker containers
+# https://docs.github.com/en/actions/creating-actions/creating-a-docker-container-action
+# Started as main.yml in root folder
+
+name: AutoGrader-PS2   # Shows in the 'Workflows' section (left sidebar) of the GitHub Actions tab
+
+on:                             # What is going to trigger this Workflow?
+  push:
+    branches: [ ps2 ]
+
+jobs:                           # What actually needs done? 1+ jobs can be added, will run in parallel by default
+  ag-ps2:                       # Name for your consumption only: is not obviously exposed anywhere
+    name: 'Autograding PS2'     # Shows in the 'Jobs' section (left sidebar) of the Actions>Runs view
+    runs-on: ubuntu-latest
+
+    # There are various ways of invoking Dockerized actions, including spinning up a container based on a Dockerfile
+    # as one of your steps. We found that that eventually creates problems with the `user` the shell perceives to
+    # be running the Rscript tasks at the end, which creates problems with keeping the loaded R libraries in memory
+    # and being able to execute `install.packages()` calls internal to the student code.
+    # Using this `container: foo` approach sidesteps all that.
+    container: dalexhughes/w241
+    steps:
+
+      # To use any repository's private action rather than a public one,
+      # you must first check out the repository
+      - name: 'Running -Checkout- hook'     #  (Standard) - REQd for EACH local action. These names shows as a foldable/expandable entry in the Runs log interface
+        uses: actions/checkout@v2           # This is a public action available on the GitHub Actions marketplace. Nothing we've developed.
+
+      # Step 2 below (checkout@v2) nukes the current workspace in memory;
+      # if we want access to the -current- workspace (which includes the student's work)
+      # we need to move it someplace that won't get blasted away. To wit, the GitHub Action's
+      # "runner's" HOME directory
+      - id: copy-answers-to-home
+        name: 'Custom Step [1]: Move student answers to safe HOME'  # Name shown as a foldable/expandable entry in the Actions > Runs log interface
+        shell: bash
+        run: |
+          sudo apt-get -qq install tree
+          mv "${GITHUB_WORKSPACE}/${GITHUB_ACTOR}/" "${HOME}/${GITHUB_ACTOR}/"
+
+      - id: fetch-test-suite-from-irepo
+        name: 'Custom Step [2]: Go grab testing suite from instructor repo'
+        uses: actions/checkout@v2
+        with:
+          repository: TSSlade/autograder_secrets    # The (private) repo where our testing suite and answer keys are living
+          ref: ps2                                  # The specific branch to be checked out
+          token: ${{ secrets.w241_autograder }}     # This PAT needs to be configured in the src repo (i.e. the one mentioned 2 lines up)
+
+      # There's a very persnickety arrangement of files implied by the testing suite and answer keys that took a long
+      # time to get juuuuuust right. To simplify things, I created a `testing_center` space within the problem set folder
+      # (ps2 in this case). It ultimately needs to look like this:
+      # .                                             # This is the GITHUB_WORKSPACE
+      # ├── ps2                                       ## This folder is where the magic happens
+      # │   ├── answer key shortcut.txt               ## This comes over with the -pull- from the instructor repo
+      # │   ├── answers                               ## Ibid.
+      # │   │   ├── answer_1.Rmd                      ## |
+      # │   │   ├── answer_2.Rmd                      ## |
+      # │   │   ├── answer_3.Rmd                      ## |
+      # │   │   └── answer_4.Rmd                      ## |
+      # │   ├── data                                  ## Ibid. Must be an aunt/uncle to the student's `answers` folder.
+      # │   │   ├── clingingsmith_2009.csv            ## |
+      # │   │   └── list_data_2019.csv                ## |
+      # │   ├── testing_center                        ## This is what we create as our space to run the testing suite
+      # │   │   ├── answers                           ## This folder (and its contents) began life as the
+      # │   │   │   ├── answer_1.Rmd                  ##      {student}/questions folder in their local repo.
+      # │   │   │   ├── answer_2.Rmd                  ## |
+      # │   │   │   ├── answer_3.Rmd                  ## |
+      # │   │   │   └── answer_4.Rmd                  ## |
+      # │   │   ├── ps2_answers.R                     ## Part of the instructor repo. Must be a sibling to the `answers` folder.
+      # │   │   ├── ps2_answers.Rmd                   ## Ibid.
+      # │   │   ├── run_tests.R                       ## Ibid.
+      # │   │   └── test_ps2_answers.R                ## Ibid.
+      # ...                                           ## Some stuff here that can be elided b/c it won't be in the final version and is not used
+      # └── student                                   ## This folder was created by us to hold the contents of the student's local repo
+      #     └── TSSlade                               ## ...and this is the student's local repo. ${GITHUB_ACTOR}
+      #         ├── data                              ## This will never be used by our testing suite. We can disregard.
+      #         │   ├── clingingsmith_2009.csv        ## Ibid.
+      #         │   └── list_data_2019.csv            ## Ibid.
+      #         ├── ps2.md                            ## Ibid.
+      #         ├── ps2.Rmd                           ## Ibid.
+      #         └── questions                         ## This folder is what gets copied up into our testing_center and tested
+      #             ├── answer_1.Rmd                  ## |
+      #             ├── answer_2.Rmd                  ## |
+      #             ├── answer_3.Rmd                  ## |
+      #             └── answer_4.Rmd                  ## |
+
+
+      # If you come back to troubleshoot later, toss in
+      #   `echo "Student's work should now be in 'GITHUB_WORKSPACE':`
+      #   `tree -L 4 "${GITHUB_WORKSPACE}"`
+      # at the end of the bash shell commands
+      - id: staging-student-work
+        name: "Custom Step [3]: Retrieve student's work from storage, stage in testing area"
+        shell: bash
+        run: |
+          mkdir "${GITHUB_WORKSPACE}/student"
+          mv "${HOME}/${GITHUB_ACTOR}/" "${GITHUB_WORKSPACE}/student/${GITHUB_ACTOR}/"
+          mkdir -p ${GITHUB_WORKSPACE}/ps2/testing_center/answers
+          cp ${GITHUB_WORKSPACE}/student/${GITHUB_ACTOR}/questions/* "${GITHUB_WORKSPACE}/ps2/testing_center/answers"
+
+      # If you come back to troubleshoot later, toss in
+      #   `echo "Final pre-testing status:"`
+      #   `tree -L 4`
+      # at the end of the bash shell commands
+      - id: staging-testing-suite
+        name: 'Custom Step [4]: Set up testing suite'
+        shell: bash
+        run: |
+          mv "${GITHUB_WORKSPACE}/ps2/ps2_answers.R" "${GITHUB_WORKSPACE}/ps2/testing_center/ps2_answers.R"
+          mv "${GITHUB_WORKSPACE}/ps2/ps2_answers.Rmd" "${GITHUB_WORKSPACE}/ps2/testing_center/ps2_answers.Rmd"
+          mv "${GITHUB_WORKSPACE}/ps2/test_ps2_answers.R" "${GITHUB_WORKSPACE}/ps2/testing_center/test_ps2_answers.R"
+          mv "${GITHUB_WORKSPACE}/ps2/run_tests.R" "${GITHUB_WORKSPACE}/ps2/testing_center/run_tests.R"
+          chmod +x "${GITHUB_WORKSPACE}/ps2/testing_center/run_tests.R"
+
+      # The results of the testing suite will be logged to the console via the `cat foo` command below. If the student
+      # wants to watch it in real-time, they can. But we also write those results to file (rather than just `echo`-ing 
+      # to console) so they can be uploaded / retrieved by the student if so desired.
+      - id: running-testing-suite
+        name: 'Custom Step [5]: Execute testing suite'
+        shell: bash
+        run: |
+          cd "./ps2/testing_center"
+          Rscript -e "source('./run_tests.R')" > "test_results_${{ github.actor }}_${{ github.run_id }}.md"
+          echo "+++ Drumroll please: +++"
+          cat "test_results_${{ github.actor }}_${{ github.run_id }}.md"
+          echo "Finished with ${GITHUB_ACTOR}"
+
+      # This uploads the result as an `artifact` that gets attached to that particular `Run` in the repo's
+      # `Actions` tab. It is not fully ephemeral, and the retention time can be configured (via the `retention-days`
+      # key, natch.) Package format is a .zip file, and current testing indicates package size around the tens
+      # of kilobytes, not more.
+      - id: upload-test-as-artifact
+        name: 'Custom Step [6]: Saving test result as artifact'
+        uses: actions/upload-artifact@v2
+        with:
+          name: testing-suite-pkg
+          path: "${{ github.workspace }}/ps2/testing_center/test_results_${{ github.actor }}_${{ github.run_id }}.md"
+          retention-days: 1
