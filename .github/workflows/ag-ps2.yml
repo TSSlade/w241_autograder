@@ -46,7 +46,7 @@ jobs:                           # What actually needs done? 1+ jobs can be added
         # tree -L 4 "${GITHUB_WORKSPACE}"
 
       - id: staging-testing-suite
-        name: 'Custom Step [4]: Setting up testing suite'
+        name: 'Custom Step [4]: Set up testing suite'
         shell: bash
         run: |
           mv "${GITHUB_WORKSPACE}/ps2/ps2_answers.R" "${GITHUB_WORKSPACE}/ps2/testing_center/ps2_answers.R"
@@ -58,15 +58,25 @@ jobs:                           # What actually needs done? 1+ jobs can be added
         # tree -L 4
 
       - id: running-testing-suite
-        name: 'Custom Step [5]: Executing testing suite'
+        name: 'Custom Step [5]: Execute testing suite'
         shell: bash
         run: |
           cd "./ps2/testing_center"
-          Rscript -e "library(knitr); library(testthat); loadedNamespaces(); source('./alex.R');" >> test_results.md
-          cat test_results.md
+          Rscript -e "library(knitr); library(testthat); loadedNamespaces(); source('./alex.R');" >> test_results_$GITHUB_ACTOR_$GITHUB_RUN_ID.md
+          cat test_results_$GITHUB_ACTOR_$GITHUB_RUN_ID.md
           echo "Finished with ${GITHUB_ACTOR}"
         # echo "Currently in:" `pwd`
         # tree -L 4 ${GITHUB_WORKSPACE}
+
+      - id: upload-test-as-artifact
+        name: 'Custom Step [6]: Saving test result as artifact'
+        uses: actions/upload-artifact@v2
+        with:
+          name: testing-suite-pkg
+          path: "./ps2/testing_center/test_results_$GITHUB_ACTOR_$GITHUB_RUN_ID.md"
+          retention-days: 1
+
+
 
 # delete-artifacts:
 #   runs-on: ubuntu-latest
