@@ -62,12 +62,13 @@ jobs:                           # What actually needs done? 1+ jobs can be added
         shell: bash
         run: |
           cd "./ps2/testing_center"
-          Rscript -e "library(knitr); library(testthat); loadedNamespaces(); source('./alex.R')" >> "${{ github.workspace }}/ps2/testing_center/test_results_${{ github.actor }}_${{ github.run_id }}.md"
+          Rscript -e "library(knitr); library(testthat); loadedNamespaces(); source('./alex.R')" > "${{ github.workspace }}/ps2/testing_center/test_results_${{ github.actor }}_${{ github.run_id }}.md"
           echo "+++ Drumroll please: +++"
           cat "${{ github.workspace }}/ps2/testing_center/test_results_${{ github.actor }}_${{ github.run_id }}.md"
           echo "Finished with ${GITHUB_ACTOR}"
         # echo "Currently in:" `pwd`
         # tree -L 4 ${GITHUB_WORKSPACE}
+        # /usr/lib/R/bin/R --no-echo --no-restore --file=foobar.r
 
       - id: upload-test-as-artifact
         name: 'Custom Step [6]: Saving test result as artifact'
